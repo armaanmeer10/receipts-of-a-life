@@ -31,6 +31,11 @@ const KNOWN_ARTISTS = [
   'The Voidz',
 ]
 
+/**
+ * Extracts a known artist name from an event's title, detail, or tags.
+ * @param {Object} event - The raw event object from events.json.
+ * @returns {string|null} The matched artist name or null if not found.
+ */
 function extractArtist(event) {
   if (!event) return null
   for (const art of KNOWN_ARTISTS) {
@@ -45,6 +50,14 @@ function extractArtist(event) {
   return null
 }
 
+/**
+ * Dynamic calculation engine that returns stats, top artists, financial totals,
+ * and event counts for a specific selected year or all years combined.
+ * @param {Array} events - Array of events from events.json.
+ * @param {Object} stats - Stats object from stats.json.
+ * @param {string|number} year - The target year or 'ALL'.
+ * @returns {Object|null} Year-filtered statistics object or null if events is empty.
+ */
 export function getYearStats(events = [], stats = {}, year = 'ALL') {
   if (!events || events.length === 0) return null
 

@@ -1,3 +1,7 @@
+/**
+ * StoryRoll Page: Chronological chapter tape walkthrough (2013-2024) with interactive timeline scrubber,
+ * live print head animation toggle, biography header, and chapter event audit logs.
+ */
 import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useYear, AVAILABLE_YEARS } from '../context/YearContext'

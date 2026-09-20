@@ -22,6 +22,12 @@ export const AVAILABLE_YEARS = [
   2024,
 ]
 
+/**
+ * React Context provider component that wraps the application and supplies
+ * the active selected audit year and setter function to all child pages.
+ * @param {Object} props - Component props containing children.
+ * @returns {JSX.Element} Context provider component.
+ */
 export function YearProvider({ children }) {
   const [selectedYear, setSelectedYear] = useState('ALL')
 
@@ -38,6 +44,10 @@ export function YearProvider({ children }) {
   )
 }
 
+/**
+ * Custom React hook to access the shared year selection state.
+ * @returns {{ selectedYear: string|number, setSelectedYear: Function, availableYears: Array }} Year context value.
+ */
 export function useYear() {
   return useContext(YearContext)
 }

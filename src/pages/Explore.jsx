@@ -1,3 +1,7 @@
+/**
+ * Explore Page: Read-only database console log interface with real-time text search, preset audit chips,
+ * dynamic timeline scrubber playback, Exhibit A top artists audit, and Exhibit B purchase ledger donut.
+ */
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useYear, AVAILABLE_YEARS } from '../context/YearContext'

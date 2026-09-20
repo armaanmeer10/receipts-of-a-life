@@ -1,3 +1,7 @@
+/**
+ * StringBoard Page: Interactive corkboard conspiracy board connecting music scrobbles, financial receipts,
+ * subscription stacks, and travel events using SVG red string paths and forensic investigation dossiers.
+ */
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useYear, AVAILABLE_YEARS } from '../context/YearContext'

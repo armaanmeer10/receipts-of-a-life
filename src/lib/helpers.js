@@ -1,8 +1,18 @@
+/**
+ * Formats a number with US locale comma separators or returns string representation.
+ * @param {number|null|undefined} n - The number to format.
+ * @returns {string} Formatted number string.
+ */
 export function num(n) {
   if (n == null) return '0'
   return typeof n === 'number' ? n.toLocaleString('en-US') : String(n)
 }
 
+/**
+ * Formats an ISO date string into DD MMM YYYY format.
+ * @param {string} isoStr - ISO date string.
+ * @returns {string} Uppercase formatted date string.
+ */
 export function fmtDate(isoStr) {
   if (!isoStr) return ''
   const d = new Date(isoStr)
@@ -14,6 +24,11 @@ export function fmtDate(isoStr) {
   }).toUpperCase()
 }
 
+/**
+ * Formats an ISO date string into 24-hour HH:MM format.
+ * @param {string} isoStr - ISO date string.
+ * @returns {string} 24-hour time string.
+ */
 export function fmtTime(isoStr) {
   if (!isoStr) return ''
   const d = new Date(isoStr)
@@ -25,6 +40,9 @@ export function fmtTime(isoStr) {
   })
 }
 
+/**
+ * Synthesizes a short 880Hz audio beep tone using the Web Audio API for thermal printer sound effects.
+ */
 export function playBeep() {
   try {
     const Ctx = window.AudioContext || window.webkitAudioContext

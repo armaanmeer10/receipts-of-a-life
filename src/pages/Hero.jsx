@@ -1,3 +1,7 @@
+/**
+ * Hero Page: Landing experience featuring thermal receipt printer animation, year selector,
+ * interactive stat tiles, neo-brutalist stickers, and browser thermal print trigger.
+ */
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useYear, AVAILABLE_YEARS } from '../context/YearContext'

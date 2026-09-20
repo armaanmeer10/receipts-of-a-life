@@ -1,3 +1,7 @@
+/**
+ * Insights Page: Behavioral audit and psyche synthesis page featuring four distinct neo-brutalist
+ * archetype cards (#01 Night Owl, #02 Beatles Loyalist, #03 Saver Investor, #04 Binge Listener).
+ */
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
