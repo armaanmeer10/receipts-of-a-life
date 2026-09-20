@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* ---- DESIGN TOKENS (neo-brutalism) ---- */
+@theme static {
+  --color-paper: #fff8e7;
+  --color-ink: #111111;
+  --color-sun: #ffe500;
+  --color-hot: #ff4d8d;
+  --color-volt: #3d5afe;
+  --color-mint: #4ade80;
+
+  --font-display: 'Space Grotesk', 'Arial Black', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+
+  --shadow-brut: 6px 6px 0 #111111;
+  --shadow-brut-sm: 3px 3px 0 #111111;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  background-color: var(--color-paper);
+  background-image: radial-gradient(rgba(17, 17, 17, 0.14) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* ---- receipt slides out of the printer, one "line" at a time ---- */
+@keyframes print-out {
+  from {
+    transform: translateY(-100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.printing {
+  animation: print-out 3.6s steps(32, end) 0.5s both;
+}
+
+/* ---- bottom ticker ---- */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  display: inline-flex;
+  width: max-content;
+  animation: marquee 70s linear infinite;
+}
+
+/* ---- red dotted string ---- */
+@keyframes flow {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+.thread {
+  fill: none;
+  stroke: #c2185b;
+  stroke-width: 3;
+  stroke-dasharray: 2 8;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  animation: flow 4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .printing,
+  .marquee,
+  .thread {
+    animation: none;
+  }
+}
