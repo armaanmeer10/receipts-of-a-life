@@ -77,10 +77,23 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* stop all decorative animations */
+  .printing {
+    animation: none;
+    transform: translateY(0); /* ensure receipt is immediately visible */
+  }
 
-  .printing,
   .marquee,
   .thread {
     animation: none;
+  }
+
+  /* Tailwind's animate-pulse also uses a CSS animation */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
