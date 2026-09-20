@@ -1,140 +1,129 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom'
-
-import Nav     from './components/Nav'
-import Ticker  from './components/Ticker'
-import Hero        from './pages/Hero'
-import StoryRoll   from './pages/StoryRoll'
+import Nav from './components/Nav'
+import Ticker from './components/Ticker'
+import Hero from './pages/Hero'
+import StoryRoll from './pages/StoryRoll'
 import StringBoard from './pages/StringBoard'
-import Explore     from './pages/Explore'
-import Insights    from './pages/Insights'
+import Explore from './pages/Explore'
+import Insights from './pages/Insights'
 
-/* ── scroll-to-top on every route change ── */
 function ScrollToTop() {
-  const { pathname, hash } = useLocation()
+  const { pathname } = useLocation()
   useEffect(() => {
-    if (!hash) window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [pathname, hash])
+    window.scrollTo(0, 0)
+  }, [pathname])
   return null
 }
 
-/* ── tiny beep helper (lives here so Nav can call it) ── */
-function beep() {
-  try {
-    const Ctx = window.AudioContext || window.webkitAudioContext
-    const ctx = new Ctx()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.type = 'square'
-    osc.frequency.value = 880
-    gain.gain.value = 0.04
-    osc.connect(gain)
-    gain.connect(ctx.destination)
-    osc.start()
-    osc.stop(ctx.currentTime + 0.09)
-  } catch {
-    /* audio blocked */
-  }
-}
-
-/* ── loading skeleton that mirrors the real page layout ── */
-function Skeleton() {
+function ThermalLoading() {
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden" aria-busy="true" aria-label="Loading your receipts">
-      <header className="sticky top-0 z-50 border-b-[3px] border-ink bg-paper">
-        <div className="flex items-center gap-3 px-4 py-3 md:px-8">
-          <div className="h-9 w-9 shrink-0 border-[3px] border-ink bg-white" />
-          <div className="h-5 w-32 animate-pulse rounded bg-ink/20" />
-          <div className="ml-auto h-9 w-28 animate-pulse rounded bg-ink/20" />
+    <div className="flex min-h-screen flex-col items-center justify-center bg-paper p-6 font-mono text-ink">
+      <div className="w-full max-w-sm border-[3px] border-ink bg-white p-6 shadow-brut text-center space-y-4">
+        <div className="inline-block border-2 border-ink bg-sun px-3 py-1 text-xs font-bold tracking-widest text-ink animate-pulse">
+          CITIZEN THERMAL PRINT HEAD: INITIALIZING ///
         </div>
-      </header>
-      <main className="relative flex-1">
-        <section className="mx-auto grid max-w-7xl gap-10 px-4 py-10 md:px-8 lg:grid-cols-[1.1fr_1fr] lg:items-start">
-          <div className="space-y-6">
-            <div className="h-6 w-48 animate-pulse rounded bg-ink/20" />
-            <div className="h-24 w-72 animate-pulse rounded bg-ink/20" />
-            <div className="h-32 w-full max-w-xl animate-pulse rounded bg-ink/20" />
-            <div className="flex gap-4">
-              <div className="h-12 w-40 animate-pulse rounded bg-ink/20" />
-              <div className="h-12 w-36 animate-pulse rounded bg-ink/20" />
-            </div>
-          </div>
-          <div className="mx-auto h-[460px] w-full max-w-[440px] animate-pulse rounded bg-ink/20" />
-        </section>
-        <section className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 pb-12 pt-4 md:px-8 lg:grid-cols-4 lg:gap-6">
-          {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-40 animate-pulse rounded border-[3px] border-ink/20 bg-ink/10" />
-          ))}
-        </section>
-      </main>
-      <footer className="border-t-[3px] border-ink bg-ink">
-        <div className="h-10 animate-pulse bg-ink/80" />
-      </footer>
+        <div className="my-2 border-t-2 border-dashed border-ink/40" />
+        <div className="font-display text-xl font-bold text-ink">
+          FEEDING ARCHIVE ROLL...
+        </div>
+        <p className="text-xs text-ink/75 leading-relaxed">
+          Parsing 149,860 Spotify scrobbles, 2,461 bank ledger transactions, and 11 years of digital exhaust.
+        </p>
+        <div className="my-2 border-t-2 border-dashed border-ink/40" />
+        <div className="flex justify-between text-xs text-ink/70 font-bold">
+          <span>STATUS: AUDITING</span>
+          <span>2013 – 2024</span>
+        </div>
+      </div>
     </div>
   )
 }
 
-/* ── root app shell ── */
-function AppShell() {
-  const [stats,    setStats]    = useState(null)
-  const [events,   setEvents]   = useState([])
-  const [error,    setError]    = useState(null)
-  const [printKey, setPrintKey] = useState(0)
-  const [beepOn,   setBeepOn]   = useState(false)
-
-  useEffect(() => {
-    const get = (name) =>
-      fetch(`/data/${name}.json`).then((r) => {
-        if (!r.ok) throw new Error(`${name}.json not found (status ${r.status})`)
-        return r.json()
-      })
-    Promise.all([get('stats'), get('events')])
-      .then(([s, e]) => { setStats(s); setEvents(e) })
-      .catch((e) => setError(e.message))
-  }, [])
-
-  if (error)  return <p className="p-8 font-mono text-red-600">Error: {error}</p>
-  if (!stats) return <Skeleton />
-
-  const [startISO, endISO] = stats.spotify_range
-  const spanDays = Math.round((new Date(endISO) - new Date(startISO)) / 86400000)
-  const years    = Math.floor(spanDays / 365.25)
-  const yearRange = `${startISO.slice(0, 4)}-${endISO.slice(0, 4)}`
-  const paper    = Math.max(10, 84 - printKey * 2)
-
-  const reprint = () => {
-    if (beepOn) beep()
-    setPrintKey((k) => k + 1)
-  }
-
+function ThermalError({ message }) {
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden">
-      <ScrollToTop />
-      <Nav
-        years={yearRange}
-        paper={paper}
-        beepOn={beepOn}
-        onBeep={() => setBeepOn((b) => !b)}
-        onPrint={reprint}
-      />
-
-      <Routes>
-        <Route path="/"        element={<Hero        stats={stats} printKey={printKey} onReprint={reprint} beepOn={beepOn} />} />
-        <Route path="/story"   element={<StoryRoll   stats={stats} events={events} />} />
-        <Route path="/board"   element={<StringBoard stats={stats} events={events} />} />
-        <Route path="/explore" element={<Explore     stats={stats} events={events} />} />
-        <Route path="/insights"element={<Insights    stats={stats} events={events} />} />
-      </Routes>
-
-      <Ticker events={events} stats={stats} />
+    <div className="flex min-h-screen flex-col items-center justify-center bg-paper p-6 font-mono text-ink">
+      <div className="w-full max-w-sm border-[3px] border-ink bg-hot/10 p-6 shadow-brut text-center space-y-4 border-hot">
+        <div className="inline-block border-2 border-ink bg-hot px-3 py-1 text-xs font-bold tracking-widest text-ink">
+          ⚠️ THERMAL PAPER JAM / ERROR
+        </div>
+        <div className="my-2 border-t-2 border-dashed border-hot/40" />
+        <div className="font-display text-xl font-bold text-ink">
+          FEED INTERRUPTED
+        </div>
+        <p className="text-xs text-ink/80 leading-relaxed">
+          {message || 'Unable to load dataset files. Please verify stats.json and events.json.'}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-2 border-2 border-ink bg-sun px-4 py-2 font-display text-xs font-bold tracking-wider text-ink shadow-[2px_2px_0_#111] hover:bg-sun/80"
+        >
+          RETRY FEED 🔄
+        </button>
+      </div>
     </div>
   )
 }
 
 export default function App() {
+  const [stats, setStats] = useState(null)
+  const [events, setEvents] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [printKey, setPrintKey] = useState(0)
+  const [beepOn, setBeepOn] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+    Promise.all([
+      fetch('./data/stats.json').then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch stats.json')
+        return res.json()
+      }),
+      fetch('./data/events.json').then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch events.json')
+        return res.json()
+      }),
+    ])
+      .then(([statsData, eventsData]) => {
+        if (isMounted) {
+          setStats(statsData)
+          setEvents(eventsData)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setError(err.message)
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  if (loading) return <ThermalLoading />
+  if (error || !stats || !events) return <ThermalError message={error} />
+
   return (
     <HashRouter>
-      <AppShell />
+      <ScrollToTop />
+      <div className="flex min-h-screen flex-col bg-paper font-sans text-ink selection:bg-hot selection:text-ink max-w-full overflow-x-hidden">
+        <Nav printKey={printKey} onPrint={() => setPrintKey((k) => k + 1)} />
+        <Routes>
+          <Route
+            path="/"
+            element={<Hero stats={stats} events={events} printKey={printKey} beepOn={beepOn} setBeepOn={setBeepOn} />}
+          />
+          <Route path="/story" element={<StoryRoll stats={stats} events={events} />} />
+          <Route path="/board" element={<StringBoard stats={stats} events={events} />} />
+          <Route path="/explore" element={<Explore stats={stats} events={events} />} />
+          <Route path="/insights" element={<Insights stats={stats} events={events} />} />
+        </Routes>
+        <Ticker stats={stats} events={events} />
+      </div>
     </HashRouter>
   )
 }

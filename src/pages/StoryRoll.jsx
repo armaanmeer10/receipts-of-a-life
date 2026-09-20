@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { num, fmtDate } from '../lib/helpers'
 
-/* ─── constants derived from data ─── */
 const CHAPTERS = [
   {
     id: 'ch1',
@@ -62,17 +61,8 @@ function chapterForYear(y) {
   return CHAPTERS.find((c) => c.years.includes(y)) || CHAPTERS[0]
 }
 
-/* ─── small ui pieces ─── */
-function Label({ children, bg = 'bg-hot', text = 'text-ink' }) {
-  return (
-    <span className={`inline-block border-2 border-ink px-2 py-0.5 text-[12px] font-bold tracking-widest ${bg} ${text}`}>
-      {children}
-    </span>
-  )
-}
-
 function Dash() {
-  return <div className="my-2 border-t-2 border-dashed border-ink/30" />
+  return <div className="my-2 border-t-2 border-dashed border-ink/40" />
 }
 
 function SectionHead({ icon, title, badge }) {
@@ -81,7 +71,7 @@ function SectionHead({ icon, title, badge }) {
       {icon && <span className="text-base" aria-hidden="true">{icon}</span>}
       <span className="font-display text-[12px] font-bold tracking-widest text-ink">{title}</span>
       {badge && (
-        <span className="ml-auto border border-hot bg-hot/20 px-1.5 py-0.5 text-[11px] font-bold tracking-widest text-hot">
+        <span className="ml-auto border border-hot bg-hot/20 px-2 py-0.5 text-[12px] font-bold tracking-widest text-[#880e4f]">
           {badge}
         </span>
       )}
@@ -89,7 +79,6 @@ function SectionHead({ icon, title, badge }) {
   )
 }
 
-/* ─── LEFT PANEL: Core Spindle Stats ─── */
 function CoreStats({ stats }) {
   const [startISO, endISO] = stats.spotify_range
   const spanDays = Math.round((new Date(endISO) - new Date(startISO)) / 86400000)
@@ -98,7 +87,7 @@ function CoreStats({ stats }) {
   const spoolsLeft = stats.years
 
   const rows = [
-    { k: 'AV/EL SPEED:', v: `${avgPerDay} PER DAY` },
+    { k: 'AVG SPEED:', v: `${avgPerDay} PER DAY` },
     { k: 'FULL LENGTH:', v: `${num(totalHrs)} HOURS` },
     { k: 'SPOOLS REMAINING:', v: `${spoolsLeft} / 6 STATIONS` },
   ]
@@ -109,19 +98,18 @@ function CoreStats({ stats }) {
       <Dash />
       {rows.map((r) => (
         <div key={r.k} className="flex justify-between gap-3 py-0.5 font-mono text-[12px]">
-          <span className="text-ink/70">{r.k}</span>
+          <span className="text-ink/75">{r.k}</span>
           <span className="font-bold">{r.v}</span>
         </div>
       ))}
       <Dash />
-      <div className="mt-1 border-2 border-dashed border-ink/40 bg-paper px-3 py-2 font-mono text-[11px] text-ink/60">
+      <div className="mt-1 border-2 border-dashed border-ink/40 bg-paper px-3 py-2 font-mono text-[12px] text-ink/75">
         MOTION PARAMETERS OK · THERMAL HEAD: 203 DPI ARCHIVAL GRADE
       </div>
     </div>
   )
 }
 
-/* ─── LEFT PANEL: Year Scrubber ─── */
 function YearScrubber({ activeYear, onYear }) {
   return (
     <div className="border-[3px] border-ink bg-white p-4 shadow-brut-sm">
@@ -135,10 +123,11 @@ function YearScrubber({ activeYear, onYear }) {
             <button
               key={y}
               onClick={() => onYear(y)}
-              className={`border-2 py-1.5 text-[12px] font-bold tracking-wider transition
+              aria-label={`Scrub to year ${y}`}
+              className={`border-2 py-2 text-[12px] font-bold tracking-wider transition min-h-[44px]
                 ${active
                   ? `border-ink ${ch.color} ${ch.textColor} shadow-[2px_2px_0_#111]`
-                  : 'border-ink/40 bg-paper/60 text-ink/60 hover:border-ink hover:bg-sun/30'
+                  : 'border-ink/50 bg-paper text-ink/75 hover:border-ink hover:bg-sun/40'
                 }`}
             >
               {y}
@@ -150,7 +139,6 @@ function YearScrubber({ activeYear, onYear }) {
   )
 }
 
-/* ─── LEFT PANEL: Chapter Rolls ─── */
 function ChapterRolls({ activeChapter, onChapter }) {
   return (
     <div className="border-[3px] border-ink bg-white p-4 shadow-brut-sm">
@@ -163,21 +151,22 @@ function ChapterRolls({ activeChapter, onChapter }) {
             <button
               key={ch.id}
               onClick={() => onChapter(ch.id)}
-              className={`flex w-full items-start justify-between gap-2 border-b border-dashed border-ink/20 py-2 text-left transition last:border-0
-                ${active ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+              aria-label={`Select chapter ${ch.label}`}
+              className={`flex w-full items-start justify-between gap-2 border-b border-dashed border-ink/30 py-2.5 text-left transition min-h-[44px] last:border-0
+                ${active ? 'opacity-100 font-bold' : 'opacity-75 hover:opacity-100'}`}
             >
               <div className="flex items-start gap-2">
-                <span className={`mt-0.5 shrink-0 border-[2px] border-ink px-1 text-[10px] font-bold ${ch.color} ${ch.textColor}`}>
+                <span className={`mt-0.5 shrink-0 border-[2px] border-ink px-1.5 py-0.5 text-[12px] font-bold ${ch.color} ${ch.textColor}`}>
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <div>
-                  <div className={`font-display text-[12px] font-bold leading-tight ${active ? 'text-ink' : 'text-ink/70'}`}>
+                  <div className={`font-display text-[12px] font-bold leading-tight ${active ? 'text-ink' : 'text-ink/80'}`}>
                     {ch.label}
                   </div>
-                  <div className="mt-0.5 font-mono text-[11px] text-ink/50">{ch.dateRange}</div>
+                  <div className="mt-0.5 font-mono text-[12px] text-ink/70">{ch.dateRange}</div>
                 </div>
               </div>
-              <span className="shrink-0 font-mono text-[11px] text-ink/40">
+              <span className="shrink-0 font-mono text-[12px] text-ink/65">
                 {ch.years.join('–')}
               </span>
             </button>
@@ -188,29 +177,27 @@ function ChapterRolls({ activeChapter, onChapter }) {
   )
 }
 
-/* ─── RIGHT PANEL: Biography tape header ─── */
 function BiographyHeader({ stats }) {
   const [startISO, endISO] = stats.spotify_range
   const startY = startISO.slice(0, 4)
-  const endY = endISO.slice(0, 4)
 
   return (
-    <div className="border-b-[3px] border-ink/30 pb-5 text-center">
-      <div className="mb-3 inline-flex items-center gap-2 border-[2px] border-paper/40 px-4 py-1">
+    <div className="border-b-[3px] border-ink/40 pb-5 text-center">
+      <div className="mb-3 inline-flex items-center gap-2 border-[2px] border-paper/60 px-4 py-1">
         <span className="text-mint text-[12px]">●</span>
-        <span className="font-mono text-[12px] tracking-widest text-paper/80">OFFICIAL BIOGRAPHY TAPE</span>
+        <span className="font-mono text-[12px] tracking-widest text-paper">OFFICIAL BIOGRAPHY TAPE</span>
         <span className="text-mint text-[12px]">●</span>
       </div>
 
-      <div className="font-display text-4xl font-bold leading-tight text-paper sm:text-5xl">
-        RECEIPTS OF A LIFE
-      </div>
-      <p className="mt-3 mx-auto max-w-sm font-mono text-[12px] leading-relaxed text-paper/60">
+      <h1 className="font-display text-3xl font-bold leading-tight text-paper sm:text-4xl md:text-5xl">
+        STORY ROLL: RECEIPTS OF A LIFE
+      </h1>
+      <p className="mt-3 mx-auto max-w-sm font-mono text-[12px] leading-relaxed text-paper/80">
         {stats.plays.toLocaleString()} plays of Spotify browsing, {num(stats.purchases)} bank
         statements, {num(stats.artists)} iTunes crumbs &amp; digital exhaust.
       </p>
 
-      <div className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 font-mono text-[11px] text-paper/40">
+      <div className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 font-mono text-[12px] text-paper/70">
         {[
           `TERMINAL ID: POS-${startY}-07`,
           `PRINTER: THERMAL BUILT-BEGIN`,
@@ -224,7 +211,6 @@ function BiographyHeader({ stats }) {
   )
 }
 
-/* ─── RIGHT PANEL: Chapter detail ─── */
 function ChapterDetail({ chapter, events }) {
   if (!chapter) return null
   const chEvents = events
@@ -233,7 +219,6 @@ function ChapterDetail({ chapter, events }) {
 
   const highlight = chEvents.find((e) => ['first_play', 'salary_first', 'peak_month', 'surge', 'last_receipt'].includes(e.kind))
   const listEvents = chEvents.filter((e) => e !== highlight).slice(0, 6)
-
   const totalVal = chEvents.reduce((s, e) => s + (e.value || 0), 0)
 
   return (
@@ -246,48 +231,45 @@ function ChapterDetail({ chapter, events }) {
         transition={{ duration: 0.25 }}
         className="space-y-4"
       >
-        {/* chapter header strip */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="mb-1 font-mono text-[11px] tracking-widest text-paper/40">
+            <div className="mb-1 font-mono text-[12px] tracking-widest text-paper/70">
               ROLL SEGMENT MORE
             </div>
-            <h2 className="font-display text-3xl font-bold leading-tight text-paper sm:text-4xl">
+            <h2 className="font-display text-2xl font-bold leading-tight text-paper sm:text-3xl">
               {chapter.label}
             </h2>
-            <div className="mt-1 font-mono text-[12px] text-paper/50">
+            <div className="mt-1 font-mono text-[12px] text-paper/80">
               TIMEFRAME: {chapter.dateRange}
             </div>
           </div>
           <div
-            className={`shrink-0 rotate-[3deg] border-[3px] border-paper/80 px-3 py-2 text-center font-display text-[11px] font-bold leading-tight tracking-wider ${chapter.color} ${chapter.textColor}`}
+            className={`shrink-0 rotate-[3deg] border-[3px] border-paper/90 px-3 py-2 text-center font-display text-[12px] font-bold leading-tight tracking-wider ${chapter.color} ${chapter.textColor}`}
           >
             AUDIT<br />ORIGIN
           </div>
         </div>
 
-        {/* highlighted event */}
         {highlight && (
-          <div className="border-2 border-mint/60 bg-mint/10 px-3 py-2">
-            <div className="mb-1 font-mono text-[11px] font-bold tracking-widest text-mint">
+          <div className="border-2 border-mint bg-mint/15 px-3 py-2">
+            <div className="mb-1 font-mono text-[12px] font-bold tracking-widest text-mint">
               ▶ AUDIT SIGNAL VERIFIED
             </div>
-            <div className="font-mono text-[12px] text-paper/80">{highlight.title}</div>
-            <div className="mt-1 font-mono text-[11px] text-paper/50">{highlight.detail}</div>
+            <div className="font-mono text-[12px] font-bold text-paper">{highlight.title}</div>
+            <div className="mt-1 font-mono text-[12px] text-paper/80">{highlight.detail}</div>
           </div>
         )}
 
-        {/* event list */}
-        <div className="border-[2px] border-paper/20 bg-paper/5">
-          <div className="border-b border-paper/20 px-3 py-1.5 font-mono text-[11px] tracking-widest text-paper/40">
-            EVENT LOG ·  {chEvents.length} ENTRIES
+        <div className="border-[2px] border-paper/30 bg-paper/10">
+          <div className="border-b border-paper/30 px-3 py-2 font-mono text-[12px] font-bold tracking-widest text-paper/80">
+            EVENT LOG · {chEvents.length} ENTRIES
           </div>
-          <div className="divide-y divide-paper/10">
+          <div className="divide-y divide-paper/20">
             {listEvents.map((e) => (
-              <div key={e.id} className="flex items-start justify-between gap-3 px-3 py-2">
+              <div key={e.id} className="flex items-start justify-between gap-3 px-3 py-2.5">
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-mono text-[12px] text-paper/80">{e.title}</div>
-                  <div className="font-mono text-[11px] text-paper/40">{fmtDate(e.date)}</div>
+                  <div className="truncate font-mono text-[12px] font-bold text-paper">{e.title}</div>
+                  <div className="font-mono text-[12px] text-paper/70">{fmtDate(e.date)}</div>
                 </div>
                 {e.value != null && (
                   <div className="shrink-0 font-mono text-[12px] font-bold text-sun">
@@ -301,13 +283,12 @@ function ChapterDetail({ chapter, events }) {
           </div>
         </div>
 
-        {/* subtotal */}
-        <div className="flex items-center justify-between border-t-2 border-dashed border-paper/30 pt-3 font-mono">
-          <span className="text-[12px] font-bold tracking-widest text-paper/60">
-            CHA SUBTOTAL (CAFFEINE &amp; SCROBBLES):
+        <div className="flex items-center justify-between border-t-2 border-dashed border-paper/40 pt-3 font-mono">
+          <span className="text-[12px] font-bold tracking-widest text-paper/80">
+            CHA SUBTOTAL:
           </span>
           <span className="text-[12px] font-bold text-sun">
-            {totalVal > 0 ? `₹${num(Math.round(totalVal))} / ${chEvents.length} MIN` : `${chEvents.length} EVENTS`}
+            {totalVal > 0 ? `₹${num(Math.round(totalVal))} / ${chEvents.length} EVENTS` : `${chEvents.length} EVENTS`}
           </span>
         </div>
       </motion.div>
@@ -315,17 +296,17 @@ function ChapterDetail({ chapter, events }) {
   )
 }
 
-/* ─── RIGHT PANEL: Thermal print head header bar ─── */
 function PrintHeadBar({ isEmitting, onToggle }) {
   return (
     <div className="flex items-center justify-between border-b-[3px] border-ink/40 bg-ink px-4 py-2">
-      <div className="flex items-center gap-2 font-mono text-[12px] tracking-widest text-paper/70">
-        <span className={`text-base ${isEmitting ? 'text-mint animate-pulse' : 'text-paper/30'}`}>●</span>
+      <div className="flex items-center gap-2 font-mono text-[12px] tracking-widest text-paper/80">
+        <span className={`text-base ${isEmitting ? 'text-mint animate-pulse' : 'text-paper/40'}`}>●</span>
         CITIZEN THERMAL PRINT HEAD: {isEmitting ? 'EMITTING ///' : 'PAUSED'}
       </div>
       <button
         onClick={onToggle}
-        className="border-[2px] border-paper/40 bg-paper/10 px-3 py-1 font-mono text-[11px] font-bold tracking-wider text-paper/70 transition hover:bg-paper/20"
+        aria-label={isEmitting ? 'Pause print emission' : 'Resume print emission'}
+        className="min-h-[44px] border-[2px] border-paper/40 bg-paper/10 px-3 py-1.5 font-mono text-[12px] font-bold tracking-wider text-paper transition hover:bg-paper/20"
       >
         {isEmitting ? 'PAUSE ACTION' : 'RESUME ▶'}
       </button>
@@ -333,7 +314,6 @@ function PrintHeadBar({ isEmitting, onToggle }) {
   )
 }
 
-/* ─── PAGE ─── */
 export default function StoryRoll({ stats, events }) {
   const [activeYear, setActiveYear] = useState(2013)
   const [activeChapterId, setActiveChapterId] = useState('ch1')
@@ -354,32 +334,27 @@ export default function StoryRoll({ stats, events }) {
   }
 
   return (
-    <main className="flex-1 bg-paper">
-      {/* ── page title strip ── */}
-      <div className="border-b-[3px] border-ink bg-ink px-4 py-2 md:px-8">
+    <main className="flex-1 bg-paper max-w-full overflow-x-hidden">
+      <div className="border-b-[3px] border-ink bg-ink px-4 py-2.5 md:px-8">
         <div className="mx-auto flex max-w-7xl items-center gap-3">
           <span className="font-display text-[12px] font-bold tracking-widest text-paper">STORY ROLL</span>
-          <span className="font-mono text-[12px] text-paper/40">·</span>
-          <span className="font-mono text-[12px] text-paper/50 tracking-wider">
+          <span className="font-mono text-[12px] text-paper/50">·</span>
+          <span className="font-mono text-[12px] text-paper/80 tracking-wider">
             {stats.plays.toLocaleString()} PLAYS · {stats.spotify_range[0].slice(0,4)}–{stats.spotify_range[1].slice(0,4)}
           </span>
-          <span className="ml-auto border border-hot bg-hot/20 px-2 py-0.5 font-mono text-[11px] font-bold tracking-widest text-hot">
+          <span className="ml-auto border border-hot bg-hot/20 px-2 py-0.5 font-mono text-[12px] font-bold tracking-widest text-hot">
             ARCHIVAL MODE
           </span>
         </div>
       </div>
 
-      {/* ── two-column body ── */}
       <div className="mx-auto grid max-w-7xl gap-0 lg:grid-cols-[440px_1fr]">
-
-        {/* ════ LEFT PANEL ════ */}
         <div className="space-y-4 border-r-0 border-ink p-4 lg:border-r-[3px] lg:p-6">
           <CoreStats stats={stats} />
           <YearScrubber activeYear={activeYear} onYear={handleYearClick} />
           <ChapterRolls activeChapter={activeChapterId} onChapter={handleChapterClick} />
         </div>
 
-        {/* ════ RIGHT PANEL ════ */}
         <div className="flex flex-col bg-ink text-paper">
           <PrintHeadBar isEmitting={emitting} onToggle={() => setEmitting((v) => !v)} />
 
@@ -393,7 +368,7 @@ export default function StoryRoll({ stats, events }) {
                 <BiographyHeader stats={stats} />
               </motion.div>
 
-              <div className="border-t-[3px] border-paper/10 pt-6">
+              <div className="border-t-[3px] border-paper/20 pt-6">
                 <ChapterDetail chapter={activeChapter} events={events} />
               </div>
             </div>
