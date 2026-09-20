@@ -1,28 +1,29 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { useYear } from '../context/YearContext'
+import { getYearStats } from '../utils/yearStats'
 import { num } from '../lib/helpers'
 
 export default function Insights({ stats, events }) {
   const navigate = useNavigate()
+  const { selectedYear } = useYear()
 
-  const totalPlays = stats.plays || 149860
-  const nightPct = stats.night_share_pct || 29.5
-  const nightPlays = Math.round(totalPlays * (nightPct / 100))
-  const beatlesPlays = stats.beatles_plays || stats.top_artists?.[0]?.plays || 13621
-  const totalPurchases = stats.purchases || 2461
-  const eventsCount = events?.length || 92
+  const yearStats = getYearStats(events, stats, selectedYear)
 
   const longestBinge = useMemo(() => {
-    if (!events) return { plays: 197, artist: 'The Beatles' }
-    const binges = events.filter((e) => e.kind === 'binge')
-    if (!binges.length) return { plays: 197, artist: 'The Beatles' }
+    let targetEvents = events
+    if (selectedYear !== 'ALL') {
+      targetEvents = events.filter((e) => e.date.startsWith(String(selectedYear)))
+    }
+    const binges = targetEvents.filter((e) => e.kind === 'binge')
+    if (!binges.length) return null
     const top = binges.reduce((max, e) => (e.value > max.value ? e : max), binges[0])
     return {
       plays: top.value,
       artist: top.title.includes('Beatles') ? 'The Beatles' : top.title.split(' ')[0],
     }
-  }, [events])
+  }, [events, selectedYear])
 
   const archetypes = [
     {
@@ -37,10 +38,12 @@ export default function Insights({ stats, events }) {
       rotate: -1.5,
       stats: [
         { label: 'PEAK ACTIVITY', value: '00:00 - 04:59 UTC' },
-        { label: 'NIGHT SHARE', value: `${nightPct}% OF PLAYS` },
+        { label: 'NIGHT PLAYS', value: yearStats.nightPlays != null ? `${num(yearStats.nightPlays)} PLAYS` : 'No records' },
       ],
-      mainStat: `${num(nightPlays)} plays logged post-midnight. Nighttime listening represents ${nightPct}% of total archive activity.`,
-      quote: `"Your late-night playlists and digital activity reveal a listener who operates when the world is quiet."`,
+      mainStat: yearStats.nightPlays != null
+        ? `${num(yearStats.nightPlays)} night plays logged for ${selectedYear}.`
+        : `No late-night scrobbles recorded for ${selectedYear}.`,
+      quote: `"Late-night playlists and digital activity reveal a listener operating when the world is quiet."`,
       status: 'CIRCADIAN PATTERN',
       statusBadge: 'NIGHT_AUDIT',
     },
@@ -55,10 +58,12 @@ export default function Insights({ stats, events }) {
       border: 'border-ink',
       rotate: 1.2,
       stats: [
-        { label: 'CORE ARTIST', value: 'THE BEATLES' },
-        { label: 'TOTAL PLAYS', value: `${num(beatlesPlays)} PLAYS` },
+        { label: 'CORE ARTIST', value: yearStats.topArtist ? yearStats.topArtist.artist : 'N/A' },
+        { label: 'ARTIST PLAYS', value: yearStats.topArtist ? `${num(yearStats.topArtist.plays)} PLAYS` : 'No records' },
       ],
-      mainStat: `${num(beatlesPlays)} lifetime plays recorded. The Beatles remain the top artist across 11 years.`,
+      mainStat: yearStats.topArtist
+        ? `${num(yearStats.topArtist.plays)} plays of ${yearStats.topArtist.artist} recorded in ${selectedYear}.`
+        : `No dominant mono-artist recorded for ${selectedYear}.`,
       quote: `"When seeking focus or comfort, you consistently turned to mono-artist listening loops."`,
       status: 'MONO-ARTIST AUDIT',
       statusBadge: 'BINGE_LOCKED',
@@ -74,10 +79,12 @@ export default function Insights({ stats, events }) {
       border: 'border-ink',
       rotate: -0.8,
       stats: [
-        { label: 'LEDGER MOVES', value: `${num(totalPurchases)} ENTRIES` },
-        { label: 'RECORDED SPAN', value: '2015 – 2018' },
+        { label: 'LEDGER MOVES', value: yearStats.purchases != null ? `${num(yearStats.purchases)} ENTRIES` : 'No records' },
+        { label: 'TOTAL SPEND', value: yearStats.totalSpend != null ? `₹${num(Math.round(yearStats.totalSpend))}` : 'No records' },
       ],
-      mainStat: `${num(totalPurchases)} ledger transactions audited spanning salary, mutual funds, FDs, and recurring bills.`,
+      mainStat: yearStats.purchases != null
+        ? `${num(yearStats.purchases)} transactions logged in ${selectedYear} totaling ${yearStats.totalSpend ? `₹${num(Math.round(yearStats.totalSpend))}` : 'audited entries'}.`
+        : `No bank ledger entries recorded for ${selectedYear}.`,
       quote: `"Your spending ledger reflects deliberate capital allocation into fixed deposits and investments."`,
       status: 'CAPITAL AUDIT',
       statusBadge: 'VERIFIED',
@@ -93,10 +100,12 @@ export default function Insights({ stats, events }) {
       border: 'border-ink',
       rotate: 1.8,
       stats: [
-        { label: 'MAX SINGLE REPEAT', value: `${longestBinge.plays} IN A DAY` },
-        { label: 'FOCUS STATE', value: 'MONO-LOOP' },
+        { label: 'MAX REPEAT', value: longestBinge ? `${longestBinge.plays} IN A DAY` : 'No records' },
+        { label: 'FOCUS STATE', value: longestBinge ? 'MONO-LOOP' : 'BALANCED' },
       ],
-      mainStat: `Single day repeat record: ${longestBinge.plays} plays of ${longestBinge.artist} in a single 24-hour window.`,
+      mainStat: longestBinge
+        ? `Single day repeat record: ${longestBinge.plays} plays of ${longestBinge.artist} in a 24-hour window.`
+        : `No single-artist binge day recorded for ${selectedYear}.`,
       quote: `"High-volume repeat listening days correlate directly with intense coding and work sessions."`,
       status: 'RECURSIVE COGNITION',
       statusBadge: 'MONO_LOOP',
@@ -118,8 +127,8 @@ export default function Insights({ stats, events }) {
                 <span className="border border-ink bg-paper px-2 py-0.5 text-[12px] font-bold tracking-widest text-ink">
                   SECTION 05 // FINAL SYNTHESIS
                 </span>
-                <span className="text-[12px] text-ink/75 tracking-wider">
-                  STATION 01F: POS-LOG 2013-2024-SYSV
+                <span className="text-[12px] text-ink/75 tracking-wider font-bold">
+                  ACTIVE AUDIT: {selectedYear}
                 </span>
               </div>
               <h1 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl md:text-5xl">
@@ -133,13 +142,13 @@ export default function Insights({ stats, events }) {
 
             <div className="shrink-0 border-[3px] border-ink bg-sun p-4 shadow-brut-sm max-w-xs">
               <div className="text-[12px] font-bold tracking-widest text-ink/80">
-                DATA CONFIDENCE: 100% (AUDITED)
+                AUDIT YEAR: {selectedYear}
               </div>
               <div className="font-display text-lg font-bold text-ink mt-0.5">
-                {num(totalPlays)} EVENTS VERIFIED
+                {yearStats.plays != null ? `${num(yearStats.plays)} SCROBBLES` : 'NO SCROBBLES'}
               </div>
               <div className="mt-1 text-[12px] text-ink/80 border-t border-dashed border-ink/40 pt-1 font-bold">
-                {eventsCount} ANOMALIES &amp; MILESTONES LOCATED
+                {yearStats.events.length} EVENTS RECORDED
               </div>
             </div>
           </div>
@@ -269,13 +278,13 @@ export default function Insights({ stats, events }) {
               <span className="h-6 w-2 rounded-full border-2 border-paper/60 bg-paper/20" />
             </div>
             <div className="text-xs font-bold tracking-widest text-paper">
-              FEEDER NOZZLE #01 // THERMAL FEED IN PROGRESS
+              FEEDER NOZZLE #01 // AUDITING YEAR {selectedYear}
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             <span className="border border-sun bg-sun/20 px-2.5 py-1 text-xs font-bold text-sun">
-              FEEDER CAPACITY: ACTIVE
+              YEAR: {selectedYear}
             </span>
 
             <button

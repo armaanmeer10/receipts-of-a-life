@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { num } from '../lib/helpers'
-
-const YEARS = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
-const PEAK_YEAR = 2017
+import { useYear, AVAILABLE_YEARS } from '../context/YearContext'
+import { getYearStats } from '../utils/yearStats'
+import { num, playBeep } from '../lib/helpers'
 
 const YEAR_SUBTITLES = {
+  ALL: 'FULL ARCHIVE AUDIT (2013-2024)',
   2013: 'LATE-NIGHT BEGINNINGS / FIRST SIGNAL',
   2014: 'THE SILENT SPINDLE / ARCHIVE GAP',
   2015: 'INCOME OPENS / FIRST SALARY & INVESTMENT',
@@ -43,38 +43,29 @@ const ARTIST_DATA_BY_YEAR = {
     { name: 'BOB DYLAN', plays: 1240, track: 'MR. TAMBOURINE MAN' },
     { name: 'LED ZEPPELIN', plays: 980, track: "BABE I'M GONNA LEAVE YOU" },
     { name: 'JOHNNY CASH', plays: 890, track: 'RING OF FIRE' },
-    { name: 'PINK FLOYD', plays: 750, track: 'MONEY' },
-    { name: 'ED SHEERAN', plays: 620, track: 'TENERIFE SEA' },
   ],
   2016: [
     { name: 'THE BEATLES', plays: 2656, track: 'STRAWBERRY FIELDS FOREVER' },
     { name: 'THE BLACK KEYS', plays: 1120, track: 'HOWLIN FOR YOU' },
     { name: 'BILLY JOEL', plays: 890, track: "WE DIDN'T START THE FIRE" },
-    { name: 'BOB DYLAN', plays: 740, track: 'LIKE A ROLLING STONE' },
   ],
   2017: [
     { name: 'THE BEATLES', plays: 4210, track: 'A DAY IN THE LIFE (BINGE)' },
     { name: 'RADIOHEAD', plays: 3040, track: 'IN RAINBOWS LOOP' },
     { name: 'FRANK OCEAN', plays: 2180, track: 'BLONDE LATE-NIGHT' },
-    { name: 'DAFT PUNK', plays: 1490, track: 'DISCOVERY & RAM' },
-    { name: 'BRIAN ENO', plays: 1220, track: 'AMBIENT 1 & CO.' },
   ],
   2018: [
     { name: 'THE BEATLES', plays: 3450, track: 'COME TOGETHER' },
     { name: 'THE KILLERS', plays: 2100, track: "ALL THESE THINGS THAT I'VE DONE" },
     { name: 'JOHN MAYER', plays: 1650, track: 'IN THE BLOOD' },
-    { name: 'ELVIS PRESLEY', plays: 980, track: 'JAILHOUSE ROCK' },
   ],
   2019: [
     { name: 'THE BEATLES', plays: 3890, track: 'ABBEY ROAD MEDLEY' },
     { name: 'THE STROKES', plays: 1420, track: 'THE NEW ABNORMAL' },
-    { name: 'THE KILLERS', plays: 1150, track: 'RUNAWAYS' },
   ],
   2020: [
     { name: 'HOWARD SHORE', plays: 3263, track: 'CONCERNING HOBBITS' },
     { name: 'THE KILLERS', plays: 2450, track: 'DYING BREED' },
-    { name: 'THE BEATLES', plays: 1890, track: 'LET IT BE' },
-    { name: 'THE VOIDZ', plays: 1200, track: 'LEAVE IT IN MY DREAMS' },
   ],
   2021: [
     { name: 'THE BEATLES', plays: 1450, track: 'GET BACK' },
@@ -82,16 +73,13 @@ const ARTIST_DATA_BY_YEAR = {
   ],
   2022: [
     { name: 'JUANES', plays: 890, track: 'LA CAMISA NEGRA' },
-    { name: 'THE BEATLES', plays: 650, track: 'IN MY LIFE' },
   ],
   2023: [
     { name: 'EHRLING', plays: 940, track: 'DANCE WITH ME' },
-    { name: 'THE BEATLES', plays: 510, track: 'BLACKBIRD' },
   ],
   2024: [
     { name: 'ANDREA BOCELLI', plays: 780, track: 'TIME TO SAY GOODBYE' },
     { name: 'JUAN GABRIEL', plays: 640, track: 'HASTA QUE TE CONOCI' },
-    { name: 'THE BEATLES', plays: 430, track: 'NOW AND THEN' },
   ],
 }
 
@@ -151,10 +139,12 @@ function PlainSvgDonut({ data, total }) {
 }
 
 export default function Explore({ stats, events }) {
-  const [selectedYear, setSelectedYear] = useState(PEAK_YEAR)
+  const { selectedYear, setSelectedYear } = useYear()
   const [searchQuery, setSearchQuery] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
   const searchInputRef = useRef(null)
+
+  const yearStats = getYearStats(events, stats, selectedYear)
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -170,34 +160,44 @@ export default function Explore({ stats, events }) {
     let interval = null
     if (isPlaying) {
       interval = setInterval(() => {
-        setSelectedYear((prev) => {
-          if (prev >= 2024) {
-            setIsPlaying(false)
-            return 2024
-          }
-          return prev + 1
-        })
+        const yearsList = AVAILABLE_YEARS.filter((y) => y !== 'ALL')
+        const currentIdx = yearsList.indexOf(Number(selectedYear))
+        if (currentIdx === -1 || currentIdx >= yearsList.length - 1) {
+          setIsPlaying(false)
+          setSelectedYear(2024)
+        } else {
+          setSelectedYear(yearsList[currentIdx + 1])
+        }
       }, 1500)
     }
     return () => clearInterval(interval)
-  }, [isPlaying])
+  }, [isPlaying, selectedYear, setSelectedYear])
 
   const filteredEvents = useMemo(() => {
-    if (!searchQuery.trim()) return events
+    let list = events
+    if (selectedYear !== 'ALL') {
+      list = list.filter((e) => e.date.startsWith(String(selectedYear)))
+    }
+    if (!searchQuery.trim()) return list
+
     const q = searchQuery.toLowerCase()
-    return events.filter(
+    return list.filter(
       (e) =>
         e.title.toLowerCase().includes(q) ||
         (e.detail && e.detail.toLowerCase().includes(q)) ||
         (e.tags && e.tags.some((t) => t.toLowerCase().includes(q))) ||
-        (e.kind && e.kind.toLowerCase().includes(q)) ||
-        (e.type && e.type.toLowerCase().includes(q))
+        (e.kind && e.kind.toLowerCase().includes(q))
     )
-  }, [events, searchQuery])
+  }, [events, selectedYear, searchQuery])
 
   const ledgerBreakdown = useMemo(() => {
-    const yearPurchases = events.filter(
-      (e) => e.date.startsWith(String(selectedYear)) && e.unit === 'INR' && e.value && e.value > 0
+    let targetEvents = events
+    if (selectedYear !== 'ALL') {
+      targetEvents = events.filter((e) => e.date.startsWith(String(selectedYear)))
+    }
+
+    const yearPurchases = targetEvents.filter(
+      (e) => e.unit === 'INR' && e.value && e.value > 0
     )
 
     if (yearPurchases.length === 0) return { total: 0, categories: [] }
@@ -233,11 +233,14 @@ export default function Explore({ stats, events }) {
   }, [events, selectedYear])
 
   const artistAudit = useMemo(() => {
+    if (selectedYear === 'ALL') {
+      return stats.top_artists.slice(0, 5).map((a) => ({ name: a.artist.toUpperCase(), plays: a.plays, track: 'TOP ARTIST' }))
+    }
     return ARTIST_DATA_BY_YEAR[selectedYear] || [
       { name: 'THE BEATLES', plays: 450, track: 'GENERAL SCROBBLE' },
       { name: 'VARIOUS ARTISTS', plays: 320, track: 'ARCHIVE MIX' },
     ]
-  }, [selectedYear])
+  }, [selectedYear, stats])
 
   const maxArtistPlays = useMemo(() => {
     return Math.max(...artistAudit.map((a) => a.plays), 1)
@@ -253,10 +256,10 @@ export default function Explore({ stats, events }) {
           </div>
           <div className="flex items-center gap-2">
             <span className="border border-sun bg-sun/10 px-2 py-0.5 text-[12px] font-bold text-sun">
-              TOTAL SCROBBLES: {num(stats.plays)}
+              SCROBBLES: {yearStats.plays != null ? num(yearStats.plays) : 'No records'}
             </span>
             <span className="border border-hot bg-hot/20 px-2 py-0.5 text-[12px] font-bold text-hot">
-              TRANSACTIONS: {num(stats.purchases)}
+              PURCHASES: {yearStats.purchases != null ? num(yearStats.purchases) : 'No records'}
             </span>
           </div>
         </div>
@@ -266,7 +269,7 @@ export default function Explore({ stats, events }) {
         <div className="border-[3px] border-ink bg-white p-4 shadow-brut">
           <div className="mb-2">
             <h1 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-              EXPLORE ARCHIVE LOGS
+              EXPLORE ARCHIVE LOGS ({selectedYear})
             </h1>
           </div>
 
@@ -326,6 +329,7 @@ export default function Explore({ stats, events }) {
           </div>
         </div>
 
+        {/* ══ TIMELINE SCRUBBER LINKED TO YEAR CONTEXT ══ */}
         <div className="border-[3px] border-ink bg-white p-4 shadow-brut">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <button
@@ -351,10 +355,10 @@ export default function Explore({ stats, events }) {
           </div>
 
           <div className="mt-4 overflow-x-auto pb-2">
-            <div className="flex min-w-[650px] items-center justify-between border-2 border-ink bg-paper p-1.5">
-              {YEARS.map((y) => {
-                const isSelected = y === selectedYear
-                const isPeak = y === PEAK_YEAR
+            <div className="flex min-w-[700px] items-center justify-between border-2 border-ink bg-paper p-1.5">
+              {AVAILABLE_YEARS.map((y) => {
+                const isSelected = selectedYear === y || selectedYear === String(y)
+                const isPeak = y === 2017
 
                 return (
                   <button
@@ -363,6 +367,7 @@ export default function Explore({ stats, events }) {
                       setSelectedYear(y)
                       setIsPlaying(false)
                     }}
+                    aria-pressed={isSelected}
                     aria-label={`Select year ${y}`}
                     className={`relative flex flex-1 flex-col items-center justify-center py-2 text-xs font-bold transition min-h-[44px] ${
                       isSelected
@@ -395,7 +400,7 @@ export default function Explore({ stats, events }) {
                     TOP ARTISTS AUDIT ({selectedYear})
                   </h2>
                 </div>
-                {selectedYear === PEAK_YEAR && (
+                {selectedYear === 2017 && (
                   <span className="border-2 border-ink bg-sun px-2 py-0.5 text-[12px] font-bold text-ink">
                     ★ PEAK YEAR
                   </span>
@@ -435,8 +440,8 @@ export default function Explore({ stats, events }) {
               </div>
             </div>
 
-            <div className="mt-6 border-t-2 border-dashed border-ink/30 pt-3 text-[12px] text-ink/75">
-              NOTE: DATA DERIVED FROM CONTINUOUS AUDIT LOGS FOR {selectedYear}.
+            <div className="mt-6 border-t-2 border-dashed border-ink/30 pt-3 text-[12px] text-ink/75 font-bold">
+              AUDITED LOGS FOR {selectedYear}: {yearStats.events.length} EVENTS
             </div>
           </div>
 
@@ -500,7 +505,7 @@ export default function Explore({ stats, events }) {
               )}
             </div>
 
-            <div className="mt-6 border-t-2 border-dashed border-ink/30 pt-3 text-[12px] text-ink/75">
+            <div className="mt-6 border-t-2 border-dashed border-ink/30 pt-3 text-[12px] text-ink/75 font-bold">
               BANK AUDIT WINDOW: 2015 – 2018 /// TOTAL LEDGER ENTRIES: {num(stats.purchases)}
             </div>
           </div>

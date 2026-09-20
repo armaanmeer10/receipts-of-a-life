@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useYear, AVAILABLE_YEARS } from '../context/YearContext'
 import { num, fmtDate } from '../lib/helpers'
 
 const CHAPTERS = [
@@ -55,10 +56,9 @@ const CHAPTERS = [
   },
 ]
 
-const ALL_YEARS = [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
-
 function chapterForYear(y) {
-  return CHAPTERS.find((c) => c.years.includes(y)) || CHAPTERS[0]
+  if (y === 'ALL') return CHAPTERS[0]
+  return CHAPTERS.find((c) => c.years.includes(Number(y))) || CHAPTERS[0]
 }
 
 function Dash() {
@@ -79,17 +79,17 @@ function SectionHead({ icon, title, badge }) {
   )
 }
 
-function CoreStats({ stats }) {
+function CoreStats({ stats, selectedYear, yearEventsCount }) {
   const [startISO, endISO] = stats.spotify_range
   const spanDays = Math.round((new Date(endISO) - new Date(startISO)) / 86400000)
   const avgPerDay = (stats.plays / spanDays).toFixed(1)
   const totalHrs = Math.floor(stats.hours)
-  const spoolsLeft = stats.years
 
   const rows = [
+    { k: 'ACTIVE AUDIT:', v: `YEAR ${selectedYear}` },
     { k: 'AVG SPEED:', v: `${avgPerDay} PER DAY` },
     { k: 'FULL LENGTH:', v: `${num(totalHrs)} HOURS` },
-    { k: 'SPOOLS REMAINING:', v: `${spoolsLeft} / 6 STATIONS` },
+    { k: 'LOGGED EVENTS:', v: `${yearEventsCount} EVENTS` },
   ]
 
   return (
@@ -110,19 +110,20 @@ function CoreStats({ stats }) {
   )
 }
 
-function YearScrubber({ activeYear, onYear }) {
+function YearScrubber({ selectedYear, onYear }) {
   return (
     <div className="border-[3px] border-ink bg-white p-4 shadow-brut-sm">
       <SectionHead icon="◎" title="YEAR SCRUBBER" badge="TO THE ARCHIVE" />
       <Dash />
       <div className="grid grid-cols-4 gap-1.5">
-        {ALL_YEARS.map((y) => {
+        {AVAILABLE_YEARS.map((y) => {
           const ch = chapterForYear(y)
-          const active = y === activeYear
+          const active = String(y) === String(selectedYear)
           return (
             <button
               key={y}
               onClick={() => onYear(y)}
+              aria-pressed={active}
               aria-label={`Scrub to year ${y}`}
               className={`border-2 py-2 text-[12px] font-bold tracking-wider transition min-h-[44px]
                 ${active
@@ -177,15 +178,17 @@ function ChapterRolls({ activeChapter, onChapter }) {
   )
 }
 
-function BiographyHeader({ stats }) {
-  const [startISO, endISO] = stats.spotify_range
+function BiographyHeader({ stats, selectedYear }) {
+  const [startISO] = stats.spotify_range
   const startY = startISO.slice(0, 4)
 
   return (
     <div className="border-b-[3px] border-ink/40 pb-5 text-center">
       <div className="mb-3 inline-flex items-center gap-2 border-[2px] border-paper/60 px-4 py-1">
         <span className="text-mint text-[12px]">●</span>
-        <span className="font-mono text-[12px] tracking-widest text-paper">OFFICIAL BIOGRAPHY TAPE</span>
+        <span className="font-mono text-[12px] tracking-widest text-paper font-bold">
+          OFFICIAL BIOGRAPHY TAPE · {selectedYear}
+        </span>
         <span className="text-mint text-[12px]">●</span>
       </div>
 
@@ -201,8 +204,7 @@ function BiographyHeader({ stats }) {
         {[
           `TERMINAL ID: POS-${startY}-07`,
           `PRINTER: THERMAL BUILT-BEGIN`,
-          `BATTERY: RUNNING`,
-          `COMPILER: UDC / FORKED`,
+          `ACTIVE YEAR: ${selectedYear}`,
         ].map((t) => (
           <span key={t}>{t}</span>
         ))}
@@ -211,20 +213,24 @@ function BiographyHeader({ stats }) {
   )
 }
 
-function ChapterDetail({ chapter, events }) {
+function ChapterDetail({ chapter, events, selectedYear }) {
   if (!chapter) return null
-  const chEvents = events
-    .filter((e) => e.chapter === chapter.id)
-    .sort((a, b) => a.date.localeCompare(b.date))
+  let chEvents = events.filter((e) => e.chapter === chapter.id)
+
+  if (selectedYear !== 'ALL') {
+    chEvents = chEvents.filter((e) => e.date.startsWith(String(selectedYear)))
+  }
+
+  chEvents.sort((a, b) => a.date.localeCompare(b.date))
 
   const highlight = chEvents.find((e) => ['first_play', 'salary_first', 'peak_month', 'surge', 'last_receipt'].includes(e.kind))
-  const listEvents = chEvents.filter((e) => e !== highlight).slice(0, 6)
+  const listEvents = chEvents.filter((e) => e !== highlight).slice(0, 8)
   const totalVal = chEvents.reduce((s, e) => s + (e.value || 0), 0)
 
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        key={chapter.id}
+        key={`${chapter.id}-${selectedYear}`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
@@ -233,8 +239,8 @@ function ChapterDetail({ chapter, events }) {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="mb-1 font-mono text-[12px] tracking-widest text-paper/70">
-              ROLL SEGMENT MORE
+            <div className="mb-1 font-mono text-[12px] tracking-widest text-paper/70 font-bold">
+              ROLL SEGMENT: {selectedYear}
             </div>
             <h2 className="font-display text-2xl font-bold leading-tight text-paper sm:text-3xl">
               {chapter.label}
@@ -262,24 +268,30 @@ function ChapterDetail({ chapter, events }) {
 
         <div className="border-[2px] border-paper/30 bg-paper/10">
           <div className="border-b border-paper/30 px-3 py-2 font-mono text-[12px] font-bold tracking-widest text-paper/80">
-            EVENT LOG · {chEvents.length} ENTRIES
+            EVENT LOG · {chEvents.length} ENTRIES ({selectedYear})
           </div>
           <div className="divide-y divide-paper/20">
-            {listEvents.map((e) => (
-              <div key={e.id} className="flex items-start justify-between gap-3 px-3 py-2.5">
-                <div className="min-w-0 flex-1">
-                  <div className="truncate font-mono text-[12px] font-bold text-paper">{e.title}</div>
-                  <div className="font-mono text-[12px] text-paper/70">{fmtDate(e.date)}</div>
-                </div>
-                {e.value != null && (
-                  <div className="shrink-0 font-mono text-[12px] font-bold text-sun">
-                    {e.unit === 'INR'
-                      ? `₹${num(Math.round(e.value))}`
-                      : `${e.unit === 'plays' ? num(e.value) : e.value} ${e.unit}`}
-                  </div>
-                )}
+            {chEvents.length === 0 ? (
+              <div className="p-4 text-center text-xs text-paper/70 font-mono">
+                No events logged for this chapter in year {selectedYear}.
               </div>
-            ))}
+            ) : (
+              listEvents.map((e) => (
+                <div key={e.id} className="flex items-start justify-between gap-3 px-3 py-2.5">
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate font-mono text-[12px] font-bold text-paper">{e.title}</div>
+                    <div className="font-mono text-[12px] text-paper/70">{fmtDate(e.date)}</div>
+                  </div>
+                  {e.value != null && (
+                    <div className="shrink-0 font-mono text-[12px] font-bold text-sun">
+                      {e.unit === 'INR'
+                        ? `₹${num(Math.round(e.value))}`
+                        : `${e.unit === 'plays' ? num(e.value) : e.value} ${e.unit}`}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -315,14 +327,21 @@ function PrintHeadBar({ isEmitting, onToggle }) {
 }
 
 export default function StoryRoll({ stats, events }) {
-  const [activeYear, setActiveYear] = useState(2013)
+  const { selectedYear, setSelectedYear } = useYear()
   const [activeChapterId, setActiveChapterId] = useState('ch1')
   const [emitting, setEmitting] = useState(true)
+
+  useEffect(() => {
+    if (selectedYear !== 'ALL') {
+      const ch = chapterForYear(selectedYear)
+      setActiveChapterId(ch.id)
+    }
+  }, [selectedYear])
 
   const activeChapter = CHAPTERS.find((c) => c.id === activeChapterId)
 
   const handleYearClick = (y) => {
-    setActiveYear(y)
+    setSelectedYear(y)
     const ch = chapterForYear(y)
     setActiveChapterId(ch.id)
   }
@@ -330,8 +349,12 @@ export default function StoryRoll({ stats, events }) {
   const handleChapterClick = (id) => {
     setActiveChapterId(id)
     const ch = CHAPTERS.find((c) => c.id === id)
-    if (ch) setActiveYear(ch.years[0])
+    if (ch && ch.years?.[0]) setSelectedYear(ch.years[0])
   }
+
+  const yearEventsCount = selectedYear === 'ALL'
+    ? events.length
+    : events.filter((e) => e.date.startsWith(String(selectedYear))).length
 
   return (
     <main className="flex-1 bg-paper max-w-full overflow-x-hidden">
@@ -340,7 +363,7 @@ export default function StoryRoll({ stats, events }) {
           <span className="font-display text-[12px] font-bold tracking-widest text-paper">STORY ROLL</span>
           <span className="font-mono text-[12px] text-paper/50">·</span>
           <span className="font-mono text-[12px] text-paper/80 tracking-wider">
-            {stats.plays.toLocaleString()} PLAYS · {stats.spotify_range[0].slice(0,4)}–{stats.spotify_range[1].slice(0,4)}
+            YEAR: {selectedYear} · {yearEventsCount} EVENTS
           </span>
           <span className="ml-auto border border-hot bg-hot/20 px-2 py-0.5 font-mono text-[12px] font-bold tracking-widest text-hot">
             ARCHIVAL MODE
@@ -350,8 +373,8 @@ export default function StoryRoll({ stats, events }) {
 
       <div className="mx-auto grid max-w-7xl gap-0 lg:grid-cols-[440px_1fr]">
         <div className="space-y-4 border-r-0 border-ink p-4 lg:border-r-[3px] lg:p-6">
-          <CoreStats stats={stats} />
-          <YearScrubber activeYear={activeYear} onYear={handleYearClick} />
+          <CoreStats stats={stats} selectedYear={selectedYear} yearEventsCount={yearEventsCount} />
+          <YearScrubber selectedYear={selectedYear} onYear={handleYearClick} />
           <ChapterRolls activeChapter={activeChapterId} onChapter={handleChapterClick} />
         </div>
 
@@ -365,11 +388,11 @@ export default function StoryRoll({ stats, events }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                <BiographyHeader stats={stats} />
+                <BiographyHeader stats={stats} selectedYear={selectedYear} />
               </motion.div>
 
               <div className="border-t-[3px] border-paper/20 pt-6">
-                <ChapterDetail chapter={activeChapter} events={events} />
+                <ChapterDetail chapter={activeChapter} events={events} selectedYear={selectedYear} />
               </div>
             </div>
           </div>

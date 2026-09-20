@@ -1,16 +1,17 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useYear, AVAILABLE_YEARS } from '../context/YearContext'
 import { num, fmtDate } from '../lib/helpers'
 
 const CARD_DEFS = [
-  { id: 'c1', cx: 14, cy: 20, rotate: -2.5, category: 'music', connects: ['c2', 'c4'] },
-  { id: 'c2', cx: 44, cy: 15, rotate: 2.5, category: 'music', connects: ['c3', 'c8'] },
-  { id: 'c3', cx: 78, cy: 24, rotate: -1.5, category: 'music', connects: ['c6'] },
-  { id: 'c4', cx: 18, cy: 64, rotate: 1.5, category: 'financial', connects: ['c5', 'c7'] },
-  { id: 'c5', cx: 46, cy: 72, rotate: -2.5, category: 'financial', connects: ['c6'] },
-  { id: 'c6', cx: 76, cy: 62, rotate: 1.5, category: 'subscription', connects: ['c3'] },
-  { id: 'c7', cx: 10, cy: 84, rotate: -3.5, category: 'travel', connects: [] },
-  { id: 'c8', cx: 58, cy: 83, rotate: 2.0, category: 'notes', connects: ['c2'] },
+  { id: 'c1', cx: 14, cy: 20, rotate: -2.5, category: 'music', connects: ['c2', 'c4'], year: 2013 },
+  { id: 'c2', cx: 44, cy: 15, rotate: 2.5, category: 'music', connects: ['c3', 'c8'], year: 2016 },
+  { id: 'c3', cx: 78, cy: 24, rotate: -1.5, category: 'music', connects: ['c6'], year: 2017 },
+  { id: 'c4', cx: 18, cy: 64, rotate: 1.5, category: 'financial', connects: ['c5', 'c7'], year: 2015 },
+  { id: 'c5', cx: 46, cy: 72, rotate: -2.5, category: 'financial', connects: ['c6'], year: 2015 },
+  { id: 'c6', cx: 76, cy: 62, rotate: 1.5, category: 'subscription', connects: ['c3'], year: 2016 },
+  { id: 'c7', cx: 10, cy: 84, rotate: -3.5, category: 'travel', connects: [], year: 2018 },
+  { id: 'c8', cx: 58, cy: 83, rotate: 2.0, category: 'notes', connects: ['c2'], year: 2016 },
 ]
 
 const CARD_LABEL = {
@@ -33,7 +34,6 @@ const FILTER_CATS = [
   { id: 'notes', label: 'NOTES & ANOMALIES', active: 'bg-[#ffd3e3] text-[#880e4f] border-ink' },
 ]
 
-// Explanations for connected node pairs based on real data
 const CONNECTION_REASONS = {
   'c1–c2': '1,106 days from initial 2013 play to 2016 Beatles discovery',
   'c1–c4': 'Pre-salary phase: free Spotify web player before first income',
@@ -232,7 +232,7 @@ function PinnedCard({ def, event, isSelected, isHidden, onClick, index }) {
   )
 }
 
-function StringLayer({ activeFilter, selectedId }) {
+function StringLayer({ activeFilter, selectedId, selectedYear }) {
   return (
     <svg
       className="pointer-events-none absolute inset-0 h-full w-full"
@@ -245,10 +245,13 @@ function StringLayer({ activeFilter, selectedId }) {
         const db = CARD_DEFS.find(d => d.id === b)
         if (!da || !db) return null
 
+        const isYearMatch = selectedYear === 'ALL' || da.year === Number(selectedYear) || db.year === Number(selectedYear)
+
         const isActive =
-          activeFilter === 'all' ||
+          isYearMatch &&
+          (activeFilter === 'all' ||
           da.category === activeFilter ||
-          db.category === activeFilter
+          db.category === activeFilter)
 
         const isHighlighted = selectedId === a || selectedId === b
         const mx = (da.cx + db.cx) / 2
@@ -263,7 +266,7 @@ function StringLayer({ activeFilter, selectedId }) {
             strokeWidth={isHighlighted ? 0.75 : 0.45}
             strokeDasharray={isHighlighted ? '1.8 1.2' : '1.4 2.2'}
             strokeLinecap="round"
-            strokeOpacity={isActive ? (isHighlighted ? 1 : 0.65) : 0.15}
+            strokeOpacity={isActive ? (isHighlighted ? 1 : 0.65) : 0.1}
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
             transition={{ duration: 1.2, delay: 0.4 + i * 0.1, ease: 'easeInOut' }}
@@ -361,7 +364,6 @@ function Dossier({ selectedId, events }) {
                 </div>
               )}
 
-              {/* Relationship Banner */}
               {chain?.relationship && (
                 <div className="border-2 border-dashed border-ink bg-sun/30 p-2.5 font-mono text-[12px]">
                   <div className="font-bold text-ink/70 tracking-widest">SYSTEM RELATIONSHIP:</div>
@@ -369,7 +371,6 @@ function Dossier({ selectedId, events }) {
                 </div>
               )}
 
-              {/* Connected Nodes List with explicit reasons */}
               {def?.connects?.length > 0 && (
                 <div>
                   <div className="mb-2 font-mono text-[12px] font-bold tracking-widest text-ink/70">
@@ -401,6 +402,7 @@ function Dossier({ selectedId, events }) {
 }
 
 export default function StringBoard({ stats, events }) {
+  const { selectedYear, setSelectedYear } = useYear()
   const [activeFilter, setActiveFilter] = useState('all')
   const [selectedId, setSelectedId] = useState(null)
 
@@ -414,7 +416,6 @@ export default function StringBoard({ stats, events }) {
 
   return (
     <main className="flex-1 max-w-full overflow-x-hidden">
-      {/* ══ HEADER ══ */}
       <div className="border-b-[3px] border-ink bg-paper px-4 py-5 md:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-3 flex flex-wrap gap-2">
@@ -431,7 +432,7 @@ export default function StringBoard({ stats, events }) {
               THE CONSPIRACY BOARD:
               <br />
               <span className="mt-1 inline-block bg-sun px-2 py-1">
-                EVERYTHING IS CONNECTED
+                EVERYTHING IS CONNECTED ({selectedYear})
               </span>
             </h1>
           </div>
@@ -443,9 +444,9 @@ export default function StringBoard({ stats, events }) {
             </p>
             <div className="flex gap-3">
               <div className="border-[3px] border-ink bg-white px-4 py-2 shadow-brut-sm">
-                <div className="font-mono text-[12px] font-bold tracking-widest text-ink/70">CORRELATION RATE</div>
+                <div className="font-mono text-[12px] font-bold tracking-widest text-ink/70">ACTIVE YEAR</div>
                 <div className="font-display text-2xl font-bold text-ink leading-none mt-0.5">
-                  100% <span className="text-xs font-mono">LINKED</span>
+                  {selectedYear}
                 </div>
               </div>
               <div className="border-[3px] border-ink bg-sun px-4 py-2 shadow-brut-sm">
@@ -456,6 +457,33 @@ export default function StringBoard({ stats, events }) {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ══ YEAR SELECTOR ROW ══ */}
+      <div className="border-b-[3px] border-ink bg-paper px-4 py-2.5 md:px-8">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2">
+          <span className="shrink-0 font-mono text-[12px] font-bold tracking-widest text-ink/75">
+            ▼ SELECT AUDIT YEAR:
+          </span>
+          {AVAILABLE_YEARS.map((y) => {
+            const isSelected = String(selectedYear) === String(y)
+            return (
+              <button
+                key={y}
+                onClick={() => setSelectedYear(y)}
+                aria-pressed={isSelected}
+                aria-label={`Select year ${y}`}
+                className={`min-h-[44px] border-2 px-3 py-1 font-mono text-[12px] font-bold tracking-wider transition
+                  ${isSelected
+                    ? 'border-ink bg-sun text-ink shadow-[2px_2px_0_#111]'
+                    : 'border-ink/50 bg-white text-ink/80 hover:border-ink'
+                  }`}
+              >
+                {y}
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -489,7 +517,6 @@ export default function StringBoard({ stats, events }) {
         </div>
       </div>
 
-      {/* ══ BOARD + DOSSIER ══ */}
       <div className="mx-auto grid max-w-7xl lg:grid-cols-[1fr_360px]">
         <div
           className="relative overflow-hidden border-b-[3px] border-ink lg:border-b-0 lg:border-r-[3px]"
@@ -514,11 +541,14 @@ export default function StringBoard({ stats, events }) {
             </div>
           </div>
 
-          <StringLayer activeFilter={activeFilter} selectedId={selectedId} />
+          <StringLayer activeFilter={activeFilter} selectedId={selectedId} selectedYear={selectedYear} />
 
           {CARD_DEFS.map((def, i) => {
             const event = getEvent(def.id, events)
-            const isHidden = activeFilter !== 'all' && def.category !== activeFilter
+            const isCategoryHidden = activeFilter !== 'all' && def.category !== activeFilter
+            const isYearHidden = selectedYear !== 'ALL' && def.year !== Number(selectedYear)
+            const isHidden = isCategoryHidden || isYearHidden
+
             return (
               <PinnedCard
                 key={def.id}

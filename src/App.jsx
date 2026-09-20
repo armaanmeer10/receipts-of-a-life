@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { YearProvider, useYear } from './context/YearContext'
 import Nav from './components/Nav'
 import Ticker from './components/Ticker'
 import Hero from './pages/Hero'
@@ -66,13 +67,14 @@ function ThermalError({ message }) {
   )
 }
 
-export default function App() {
+function MainApp() {
   const [stats, setStats] = useState(null)
   const [events, setEvents] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [printKey, setPrintKey] = useState(0)
   const [beepOn, setBeepOn] = useState(true)
+  const { selectedYear } = useYear()
 
   useEffect(() => {
     let isMounted = true
@@ -104,6 +106,11 @@ export default function App() {
       isMounted = false
     }
   }, [])
+
+  // Re-trigger print key when selected year changes
+  useEffect(() => {
+    setPrintKey((k) => k + 1)
+  }, [selectedYear])
 
   const handlePrint = () => {
     setPrintKey((k) => k + 1)
@@ -152,5 +159,13 @@ export default function App() {
         <Ticker stats={stats} events={events} />
       </div>
     </HashRouter>
+  )
+}
+
+export default function App() {
+  return (
+    <YearProvider>
+      <MainApp />
+    </YearProvider>
   )
 }
