@@ -14,7 +14,7 @@ export default function Insights({ stats, events }) {
   const longestBinge = useMemo(() => {
     let targetEvents = events
     if (selectedYear !== 'ALL') {
-      targetEvents = events.filter((e) => e.date.startsWith(String(selectedYear)))
+      targetEvents = events.filter((e) => e.date && String(e.date).includes(String(selectedYear)))
     }
     const binges = targetEvents.filter((e) => e.kind === 'binge')
     if (!binges.length) return null

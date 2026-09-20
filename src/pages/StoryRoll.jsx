@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useYear, AVAILABLE_YEARS } from '../context/YearContext'
+import { getYearStats } from '../utils/yearStats'
 import { num, fmtDate } from '../lib/helpers'
 
 const CHAPTERS = [
@@ -79,17 +80,16 @@ function SectionHead({ icon, title, badge }) {
   )
 }
 
-function CoreStats({ stats, selectedYear, yearEventsCount }) {
-  const [startISO, endISO] = stats.spotify_range
-  const spanDays = Math.round((new Date(endISO) - new Date(startISO)) / 86400000)
-  const avgPerDay = (stats.plays / spanDays).toFixed(1)
-  const totalHrs = Math.floor(stats.hours)
+function CoreStats({ yearStats }) {
+  const playsText = yearStats.plays != null ? `${num(yearStats.plays)} PLAYS` : 'No records'
+  const hoursText = yearStats.hours != null ? `${num(yearStats.hours)} HOURS` : 'No records'
+  const purchasesText = yearStats.purchases != null ? `${num(yearStats.purchases)} PURCHASES` : 'No records'
 
   const rows = [
-    { k: 'ACTIVE AUDIT:', v: `YEAR ${selectedYear}` },
-    { k: 'AVG SPEED:', v: `${avgPerDay} PER DAY` },
-    { k: 'FULL LENGTH:', v: `${num(totalHrs)} HOURS` },
-    { k: 'LOGGED EVENTS:', v: `${yearEventsCount} EVENTS` },
+    { k: 'ACTIVE AUDIT:', v: `${yearStats.dateRange}` },
+    { k: 'MUSIC PLAYS:', v: playsText },
+    { k: 'ACOUSTIC HOURS:', v: hoursText },
+    { k: 'LEDGER ENTRIES:', v: purchasesText },
   ]
 
   return (
@@ -103,7 +103,7 @@ function CoreStats({ stats, selectedYear, yearEventsCount }) {
         </div>
       ))}
       <Dash />
-      <div className="mt-1 border-2 border-dashed border-ink/40 bg-paper px-3 py-2 font-mono text-[12px] text-ink/75">
+      <div className="mt-1 border-2 border-dashed border-ink/40 bg-paper px-3 py-2 font-mono text-[12px] text-ink/75 font-bold">
         MOTION PARAMETERS OK · THERMAL HEAD: 203 DPI ARCHIVAL GRADE
       </div>
     </div>
@@ -167,7 +167,7 @@ function ChapterRolls({ activeChapter, onChapter }) {
                   <div className="mt-0.5 font-mono text-[12px] text-ink/70">{ch.dateRange}</div>
                 </div>
               </div>
-              <span className="shrink-0 font-mono text-[12px] text-ink/65">
+              <span className="shrink-0 font-mono text-[12px] text-ink/65 font-bold">
                 {ch.years.join('–')}
               </span>
             </button>
@@ -178,16 +178,19 @@ function ChapterRolls({ activeChapter, onChapter }) {
   )
 }
 
-function BiographyHeader({ stats, selectedYear }) {
+function BiographyHeader({ stats, yearStats }) {
   const [startISO] = stats.spotify_range
   const startY = startISO.slice(0, 4)
+
+  const playsText = yearStats.plays != null ? `${num(yearStats.plays)} plays` : 'No plays'
+  const purchasesText = yearStats.purchases != null ? `${num(yearStats.purchases)} purchases` : 'No bank receipts'
 
   return (
     <div className="border-b-[3px] border-ink/40 pb-5 text-center">
       <div className="mb-3 inline-flex items-center gap-2 border-[2px] border-paper/60 px-4 py-1">
         <span className="text-mint text-[12px]">●</span>
         <span className="font-mono text-[12px] tracking-widest text-paper font-bold">
-          OFFICIAL BIOGRAPHY TAPE · {selectedYear}
+          OFFICIAL BIOGRAPHY TAPE · {yearStats.year}
         </span>
         <span className="text-mint text-[12px]">●</span>
       </div>
@@ -195,16 +198,15 @@ function BiographyHeader({ stats, selectedYear }) {
       <h1 className="font-display text-3xl font-bold leading-tight text-paper sm:text-4xl md:text-5xl">
         STORY ROLL: RECEIPTS OF A LIFE
       </h1>
-      <p className="mt-3 mx-auto max-w-sm font-mono text-[12px] leading-relaxed text-paper/80">
-        {stats.plays.toLocaleString()} plays of Spotify browsing, {num(stats.purchases)} bank
-        statements, {num(stats.artists)} iTunes crumbs &amp; digital exhaust.
+      <p className="mt-3 mx-auto max-w-sm font-mono text-[12px] leading-relaxed text-paper/80 font-bold">
+        {playsText} of Spotify browsing, {purchasesText} bank statements, digital exhaust.
       </p>
 
-      <div className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 font-mono text-[12px] text-paper/70">
+      <div className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 font-mono text-[12px] text-paper/70 font-bold">
         {[
           `TERMINAL ID: POS-${startY}-07`,
           `PRINTER: THERMAL BUILT-BEGIN`,
-          `ACTIVE YEAR: ${selectedYear}`,
+          `ACTIVE AUDIT YEAR: ${yearStats.year}`,
         ].map((t) => (
           <span key={t}>{t}</span>
         ))}
@@ -218,7 +220,7 @@ function ChapterDetail({ chapter, events, selectedYear }) {
   let chEvents = events.filter((e) => e.chapter === chapter.id)
 
   if (selectedYear !== 'ALL') {
-    chEvents = chEvents.filter((e) => e.date.startsWith(String(selectedYear)))
+    chEvents = chEvents.filter((e) => e.date && String(e.date).includes(String(selectedYear)))
   }
 
   chEvents.sort((a, b) => a.date.localeCompare(b.date))
@@ -273,7 +275,7 @@ function ChapterDetail({ chapter, events, selectedYear }) {
           <div className="divide-y divide-paper/20">
             {chEvents.length === 0 ? (
               <div className="p-4 text-center text-xs text-paper/70 font-mono">
-                No events logged for this chapter in year {selectedYear}.
+                No records logged for this chapter in year {selectedYear}.
               </div>
             ) : (
               listEvents.map((e) => (
@@ -331,6 +333,10 @@ export default function StoryRoll({ stats, events }) {
   const [activeChapterId, setActiveChapterId] = useState('ch1')
   const [emitting, setEmitting] = useState(true)
 
+  const yearStats = useMemo(() => {
+    return getYearStats(events, stats, selectedYear)
+  }, [events, stats, selectedYear])
+
   useEffect(() => {
     if (selectedYear !== 'ALL') {
       const ch = chapterForYear(selectedYear)
@@ -352,18 +358,14 @@ export default function StoryRoll({ stats, events }) {
     if (ch && ch.years?.[0]) setSelectedYear(ch.years[0])
   }
 
-  const yearEventsCount = selectedYear === 'ALL'
-    ? events.length
-    : events.filter((e) => e.date.startsWith(String(selectedYear))).length
-
   return (
     <main className="flex-1 bg-paper max-w-full overflow-x-hidden">
       <div className="border-b-[3px] border-ink bg-ink px-4 py-2.5 md:px-8">
         <div className="mx-auto flex max-w-7xl items-center gap-3">
           <span className="font-display text-[12px] font-bold tracking-widest text-paper">STORY ROLL</span>
           <span className="font-mono text-[12px] text-paper/50">·</span>
-          <span className="font-mono text-[12px] text-paper/80 tracking-wider">
-            YEAR: {selectedYear} · {yearEventsCount} EVENTS
+          <span className="font-mono text-[12px] text-paper/80 tracking-wider font-bold">
+            YEAR: {selectedYear} · {yearStats.events.length} EVENTS
           </span>
           <span className="ml-auto border border-hot bg-hot/20 px-2 py-0.5 font-mono text-[12px] font-bold tracking-widest text-hot">
             ARCHIVAL MODE
@@ -373,7 +375,7 @@ export default function StoryRoll({ stats, events }) {
 
       <div className="mx-auto grid max-w-7xl gap-0 lg:grid-cols-[440px_1fr]">
         <div className="space-y-4 border-r-0 border-ink p-4 lg:border-r-[3px] lg:p-6">
-          <CoreStats stats={stats} selectedYear={selectedYear} yearEventsCount={yearEventsCount} />
+          <CoreStats yearStats={yearStats} />
           <YearScrubber selectedYear={selectedYear} onYear={handleYearClick} />
           <ChapterRolls activeChapter={activeChapterId} onChapter={handleChapterClick} />
         </div>
@@ -388,7 +390,7 @@ export default function StoryRoll({ stats, events }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
               >
-                <BiographyHeader stats={stats} selectedYear={selectedYear} />
+                <BiographyHeader stats={stats} yearStats={yearStats} />
               </motion.div>
 
               <div className="border-t-[3px] border-paper/20 pt-6">

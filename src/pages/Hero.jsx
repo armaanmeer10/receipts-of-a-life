@@ -12,12 +12,11 @@ function zigzag(teeth = 22, depth = 8) {
   return `polygon(${pts.join(', ')})`
 }
 const ZIGZAG = zigzag()
-
 const OUTLINE = 'drop-shadow(0 0 2px #111) drop-shadow(5px 5px 0 #111)'
 const BARCODE =
   'repeating-linear-gradient(90deg,#111 0 2px,transparent 2px 4px,#111 4px 5px,transparent 5px 8px,#111 8px 11px,transparent 11px 12px)'
 
-function useCountUp(target, ms = 1000) {
+function useCountUp(target, ms = 900) {
   const [value, setValue] = useState(0)
   useEffect(() => {
     if (target == null) {
@@ -109,14 +108,15 @@ function Receipt({ yearStats }) {
         <Row k="STATUS:" v="VERIFIED AUDIT" />
         <Dash />
 
-        {/* Dynamic Line Items calculated from getYearStats */}
-        {yearStats.topArtist && (
+        {yearStats.topArtist ? (
           <div className="mb-1.5">
             <div className="font-bold text-ink">01. TOP ARTIST</div>
-            <div className="text-ink/80">
+            <div className="text-ink/80 font-bold">
               {yearStats.topArtist.artist} ({num(yearStats.topArtist.plays)} PLAYS)
             </div>
           </div>
+        ) : (
+          <Row k="TOP ARTIST:" v="No records" />
         )}
 
         {yearStats.plays != null ? (
@@ -125,29 +125,37 @@ function Receipt({ yearStats }) {
           <Row k="MUSIC SCROBBLES:" v="No records" />
         )}
 
-        {yearStats.hours != null && (
+        {yearStats.hours != null ? (
           <Row k="ACOUSTIC TIME:" v={`${num(yearStats.hours)} HOURS`} />
+        ) : (
+          <Row k="ACOUSTIC TIME:" v="No records" />
         )}
 
-        {yearStats.salary != null && (
+        {yearStats.salary != null ? (
           <Row k="SALARY INFLOW:" v={`₹${num(yearStats.salary)}`} />
+        ) : (
+          <Row k="SALARY INFLOW:" v="No records" />
         )}
 
         {yearStats.totalSpend != null ? (
           <Row k="OUTFLOW SPEND:" v={`₹${num(Math.round(yearStats.totalSpend))}`} />
         ) : (
-          <Row k="OUTFLOW SPEND:" v="No receipts recorded" />
+          <Row k="OUTFLOW SPEND:" v="No records" />
         )}
 
-        {yearStats.investmentsCount > 0 && (
+        {yearStats.investmentsCount > 0 ? (
           <Row
-            k="INVESTMENT MOVES:"
+            k="INVESTMENTS:"
             v={yearStats.investmentsTotal ? `₹${num(yearStats.investmentsTotal)} (${yearStats.investmentsCount})` : `${yearStats.investmentsCount} MOVES`}
           />
+        ) : (
+          <Row k="INVESTMENTS:" v="No records" />
         )}
 
-        {yearStats.subscriptionsCount > 0 && (
+        {yearStats.subscriptionsCount > 0 ? (
           <Row k="SUBSCRIPTIONS:" v={`${yearStats.subscriptionsCount} ACTIVE`} />
+        ) : (
+          <Row k="SUBSCRIPTIONS:" v="No records" />
         )}
 
         {yearStats.busiestMonth && (
@@ -155,12 +163,12 @@ function Receipt({ yearStats }) {
         )}
 
         <Dash />
-        <Row k="SUBTOTAL (ITEMS):" v={`${yearStats.events.length} LOGS`} />
+        <Row k="SUBTOTAL (LOGS):" v={`${yearStats.events.length} EVENTS`} />
 
         <div className="mt-3 flex items-center justify-between border-2 border-ink bg-sun px-3 py-1.5 font-bold">
           <span className="font-display text-sm">TOTAL:</span>
           <span className="text-xs">
-            {yearStats.totalSpend ? `₹${num(Math.round(yearStats.totalSpend))} spent` : `${num(yearStats.plays || 0)} plays logged`}
+            {yearStats.totalSpend ? `₹${num(Math.round(yearStats.totalSpend))} spent` : yearStats.plays ? `${num(yearStats.plays)} plays` : '0 items'}
           </span>
         </div>
 
@@ -173,7 +181,7 @@ function Receipt({ yearStats }) {
   )
 }
 
-function Printer({ stats, events, printKey, yearStats }) {
+function Printer({ printKey, yearStats }) {
   return (
     <div className="relative mx-auto w-full max-w-[440px] pt-6">
       <Sticker
@@ -206,11 +214,11 @@ function Printer({ stats, events, printKey, yearStats }) {
         <div className="flex justify-between text-[12px] tracking-widest text-paper">
           <span>PRINT HEAD MK-IV</span>
           <span>
-            80MM <span className="text-mint">● READY</span>
+            80MM <span className="text-mint font-bold">● READY</span>
           </span>
         </div>
         <div className="mt-2 flex items-center justify-between border-2 border-sun bg-sun/10 px-2 py-1 text-[12px] text-sun font-bold">
-          <span>⚠ ACTIVE YEAR: {yearStats.year}</span>
+          <span>⚠ ACTIVE AUDIT YEAR: {yearStats.year}</span>
           <span className="opacity-80">203 DPI THERMAL</span>
         </div>
         <div className="mt-2 h-2 border border-paper/30 bg-black" />
@@ -276,14 +284,13 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
         <path className="thread" d="M 300 640 C 520 600, 720 420, 850 240" />
       </svg>
 
-      {/* ══ SHARED YEAR SELECTOR ROW ══ */}
       <section className="no-print relative z-20 border-b-[3px] border-ink bg-paper px-4 py-3 md:px-8">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2">
           <span className="font-mono text-[12px] font-bold tracking-widest text-ink/80">
             ▼ SELECT AUDIT YEAR:
           </span>
           {AVAILABLE_YEARS.map((y) => {
-            const isSelected = selectedYear === y || selectedYear === String(y)
+            const isSelected = String(selectedYear) === String(y)
             return (
               <button
                 key={y}
@@ -308,7 +315,7 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
           <motion.span
             initial={{ x: -30, opacity: 0 }}
             animate={{ x: 0, opacity: 1, rotate: -1 }}
-            className="inline-block border-[3px] border-ink bg-hot px-3 py-1 text-[12px] font-bold tracking-widest shadow-brut-sm"
+            className="inline-block border-[3px] border-ink bg-hot px-3 py-1 text-[12px] font-bold tracking-widest shadow-brut-sm text-ink"
           >
             ✱ AUDIT PERIOD: {selectedYear === 'ALL' ? '2013–2024' : selectedYear}
           </motion.span>
@@ -356,8 +363,6 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
         </div>
 
         <Printer
-          stats={stats}
-          events={events}
           printKey={printKey}
           yearStats={yearStats}
         />
@@ -365,6 +370,7 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
 
       <section id="audit" className="relative z-10 mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 pb-12 pt-4 md:px-8 lg:grid-cols-4 lg:gap-6">
         <Tile
+          key={`music-${selectedYear}-${yearStats.plays}`}
           label="MUSIC AUDIT"
           icon="♪"
           value={yearStats.plays}
@@ -374,6 +380,7 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
           delay={0.2}
         />
         <Tile
+          key={`hours-${selectedYear}-${yearStats.hours}`}
           label="TIME LOST"
           icon="◔"
           value={yearStats.hours}
@@ -384,6 +391,7 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
           delay={0.3}
         />
         <Tile
+          key={`purchases-${selectedYear}-${yearStats.purchases}`}
           label="PURCHASE LEDGER"
           icon="₹"
           value={yearStats.purchases}
@@ -393,6 +401,7 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
           delay={0.4}
         />
         <Tile
+          key={`timeline-${selectedYear}`}
           label="TIMELINE"
           icon="▣"
           value={selectedYear === 'ALL' ? 12 : 1}

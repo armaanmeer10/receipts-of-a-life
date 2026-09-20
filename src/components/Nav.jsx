@@ -37,9 +37,7 @@ export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
   return (
     <header className="sticky top-0 z-50 border-b-[3px] border-ink bg-paper">
       <div className="flex items-center gap-3 px-4 py-3 md:px-8">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center border-[3px] border-ink bg-white shadow-brut-sm" aria-hidden="true">
-          <PrinterIcon />
-        </div>
+        <img src="/favicon.svg" alt="Receipts of a Life logo" className="h-9 w-9 shrink-0 shadow-brut-sm" />
         <NavLink to="/" className="font-display text-sm font-bold leading-4">
           RECEIPTS OF A<br />LIFE
         </NavLink>
