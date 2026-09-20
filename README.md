@@ -17,20 +17,21 @@ What if your digital life—every late-night playlist loop, first paycheque, mon
 
 ## 🎯 Hackathon Requirement Mapping
 
-| Hackathon Requirement | Page | Component(s) | Implementation Details |
-| :--- | :--- | :--- | :--- |
-| **Explore Receipts** | Hero (`/`), Story Roll (`/story`), Explore (`/explore`) | `<Receipt>`, `<ChapterDetail>`, Event Logs | Real-time thermal receipt rendering with line items, subtotal, date range, year barcode, and detailed event logs. |
-| **Filtering / Searching / Navigation** | Explore (`/explore`), Nav (`/`), String Board (`/board`) | Search Input, Preset Audit Chips, Category Filters, Year Selector | Search events by text, filter by preset chips (`The Beatles`, `Subscriptions`, `Investments`, `Salary`), and filter all views by year (`2013`–`2024` or `ALL`). |
-| **Relationship & Pattern Discovery** | String Board (`/board`), Insights (`/insights`) | `<StringLayer>`, Pinned Cards, `<Dossier>`, Archetype Cards | Interactive corkboard with SVG red string paths connecting scrobbles to investments/subscriptions, plus 4 behavioral psyche cards. |
-| **Interactive Storytelling Experience** | Hero (`/`), Story Roll (`/story`) | Thermal Printer Animation, Chapter Rolls, Timeline Scrubber | Animated receipt ejection, Web Audio API printer chimes, timeline scrubber playback, and "Print Story" triggers. |
-| **Clear Visual Journey** | Entire Application | Step-by-Step Navigation, Page Header Tags, Live Ticker | Chronological narrative progression from 2013 origin scrobble to 2017 peak listening/finance activity to final synthesis. |
-| **Responsive Design** | Entire Application | Tailwind CSS Grid/Flexbox, Touch Targets | Mobile-first layout with 44px minimum touch targets, responsive drawer dossiers, and container overflow protection. |
+| Hackathon Requirement                   | Page                                                     | Component(s)                                                      | Implementation Details                                                                                                                                          |
+| :-------------------------------------- | :------------------------------------------------------- | :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Explore Receipts**                    | Hero (`/`), Story Roll (`/story`), Explore (`/explore`)  | `<Receipt>`, `<ChapterDetail>`, Event Logs                        | Real-time thermal receipt rendering with line items, subtotal, date range, year barcode, and detailed event logs.                                               |
+| **Filtering / Searching / Navigation**  | Explore (`/explore`), Nav (`/`), String Board (`/board`) | Search Input, Preset Audit Chips, Category Filters, Year Selector | Search events by text, filter by preset chips (`The Beatles`, `Subscriptions`, `Investments`, `Salary`), and filter all views by year (`2013`–`2024` or `ALL`). |
+| **Relationship & Pattern Discovery**    | String Board (`/board`), Insights (`/insights`)          | `<StringLayer>`, Pinned Cards, `<Dossier>`, Archetype Cards       | Interactive corkboard with SVG red string paths connecting scrobbles to investments/subscriptions, plus 4 behavioral psyche cards.                              |
+| **Interactive Storytelling Experience** | Hero (`/`), Story Roll (`/story`)                        | Thermal Printer Animation, Chapter Rolls, Timeline Scrubber       | Animated receipt ejection, Web Audio API printer chimes, timeline scrubber playback, and "Print Story" triggers.                                                |
+| **Clear Visual Journey**                | Entire Application                                       | Step-by-Step Navigation, Page Header Tags, Live Ticker            | Chronological narrative progression from 2013 origin scrobble to 2017 peak listening/finance activity to final synthesis.                                       |
+| **Responsive Design**                   | Entire Application                                       | Tailwind CSS Grid/Flexbox, Touch Targets                          | Mobile-first layout with 44px minimum touch targets, responsive drawer dossiers, and container overflow protection.                                             |
 
 ---
 
 ## 📱 Page-by-Page Features
 
 ### 1. Hero Page (`/`)
+
 - **Thermal Printer Engine**: Feeds out a physical 80mm receipt with jagged cutoffs, date ranges, line items, and dynamic barcode (`*POS-[YEAR]-AUDITED*`).
 - **Year Selector Bar**: Switch between `ALL` (2013–2024) or specific audit years (`2013`–`2024`).
 - **Dynamic Stat Tiles**: Interactive count-up tiles displaying year-specific Music Scrobbles, Acoustic Hours, Purchase Ledger counts, and Timeline spans.
@@ -38,23 +39,26 @@ What if your digital life—every late-night playlist loop, first paycheque, mon
 - **Print Story & Save Receipt**: Re-trigger receipt feeding animation with Web Audio beeps, or invoke browser `@media print` thermal paper output via `window.print()`.
 
 ### 2. Story Roll (`/story`)
+
 - **5 Chronological Chapter Rolls**:
-  1. *Chapter 01: Late-Night Beginnings (2013–2014)* — First scrobble signal.
-  2. *Chapter 02: The Winter Pivot (2015–2016)* — First salary & investments.
-  3. *Chapter 03: The Year of Everything (2017)* — Peak 5,176 plays/month & ₹2L FD.
-  4. *Chapter 04: Peak Volume & Ambience (2018–2020)* — Subscription stack & lockdown loops.
-  5. *Chapter 05: The Quiet Years (2021–2024)* — Archive fade out.
+  1. _Chapter 01: Late-Night Beginnings (2013–2014)_ — First scrobble signal.
+  2. _Chapter 02: The Winter Pivot (2015–2016)_ — First salary & investments.
+  3. _Chapter 03: The Year of Everything (2017)_ — Peak 5,176 plays/month & ₹2L FD.
+  4. _Chapter 04: Peak Volume & Ambience (2018–2020)_ — Subscription stack & lockdown loops.
+  5. _Chapter 05: The Quiet Years (2021–2024)_ — Archive fade out.
 - **Interactive Scrubber & Print Head Control**: Jump across years or toggle live thermal print head emission.
 
 ### 3. String Board (`/board`)
+
 - **The Conspiracy Board**: Corkboard layout with pinned receipt-style evidence cards.
 - **SVG Red String Layer**: Dynamic SVG paths illustrating verified data correlations:
-  - *c1–c4*: 02:44 AM origin scrobble pre-dating first salary.
-  - *c4–c5*: Exactly 5 days between first salary (28 Feb 2015) and first investment (05 Mar 2015).
-  - *c2–c3*: 2016 Beatles discovery triggering the 2017 peak listening month.
+  - _c1–c4_: 02:44 AM origin scrobble pre-dating first salary.
+  - _c4–c5_: Exactly 5 days between first salary (28 Feb 2015) and first investment (05 Mar 2015).
+  - _c2–c3_: 2016 Beatles discovery triggering the 2017 peak listening month.
 - **Forensic Investigation Dossier**: Slide-out case file details showing step-by-step chain of causation and system relationships.
 
 ### 4. Explore (`/explore`)
+
 - **Console Log Database Interface**: High-density database log search.
 - **Live Search & Clear**: Real-time filtering by track, merchant, category, or note tag with `Esc` key reset.
 - **Preset Audit Chips**: Quick-filter shortcuts (`The Beatles`, `Subscriptions`, `Investments`, `Salary`, `Travel`, `Notes`).
@@ -63,6 +67,7 @@ What if your digital life—every late-night playlist loop, first paycheque, mon
 - **Exhibit B (Purchase Ledger Donut)**: Custom SVG donut chart dissecting annual financial spend.
 
 ### 5. Insights (`/insights`)
+
 - **Behavioral Audit & Psyche Synthesis**: Four neo-brutalist archetype cards taped to the page:
   - `#01 Night Owl`: Late-night scrobbles (00:00–04:59 UTC).
   - `#02 Beatles Loyalist`: Mono-artist focus loops.
@@ -75,13 +80,17 @@ What if your digital life—every late-night playlist loop, first paycheque, mon
 ## 💡 Data Engine & Connection Discovery
 
 ### `getYearStats(events, stats, selectedYear)`
+
 Raw dataset records (`events.json` and `stats.json`) are processed through `src/utils/yearStats.js`:
+
 1. **ISO Date Parsing**: Matches event timestamps against the target 4-digit year string.
 2. **Dynamic Aggregation**: Sums music scrobbles, calculates acoustic hours, totals purchase ledger entries, tracks salary credits, and tallies active investments and subscriptions.
 3. **No Fake Zeros**: Years without recorded entries for a specific metric cleanly output `null` or `"No records"`.
 
 ### Data Relationship Discovery
+
 Relationships are discovered by cross-referencing timestamps across distinct event categories (`type: 'music'`, `type: 'income'`, `type: 'investment'`, `type: 'subscription'`):
+
 - **Temporal Correlation**: Identifying liquidity events (e.g. salary credited on Feb 28) followed immediately by capital deployment (PPF/SIP created on March 5).
 - **Behavioral Correlation**: High-volume mono-artist scrobble binges co-occurring with intensive coding or project windows.
 
@@ -109,7 +118,7 @@ receipts/
 - **Routing**: React Router DOM (`HashRouter` for zero-config client-side routing)
 - **Styling**: Tailwind CSS + Vanilla CSS (Custom neo-brutalist tokens & `@media print` rules)
 - **Animations**: Framer Motion (Spring physics & exit transitions)
-- **Typography**: Google Fonts (*Space Grotesk* for display titles & *JetBrains Mono* for receipts)
+- **Typography**: Google Fonts (_Space Grotesk_ for display titles & _JetBrains Mono_ for receipts)
 - **Audio**: Web Audio API (Synthesized square-wave 880Hz thermal printer beep tones)
 
 ---
@@ -134,10 +143,12 @@ receipts/
 ## 🚀 How to Run Locally
 
 ### Prerequisites
+
 - Node.js (v18+ recommended)
 - npm
 
 ### Installation & Setup
+
 ```bash
 # Clone repository
 git clone https://github.com/armaanmeer10/receipts-of-a-life.git

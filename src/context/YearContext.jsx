@@ -1,35 +1,15 @@
-import { createContext, useContext, useState } from 'react'
-
-const YearContext = createContext({
-  selectedYear: 'ALL',
-  setSelectedYear: () => {},
-  availableYears: ['ALL'],
-})
-
-export const AVAILABLE_YEARS = [
-  'ALL',
-  2013,
-  2014,
-  2015,
-  2016,
-  2017,
-  2018,
-  2019,
-  2020,
-  2021,
-  2022,
-  2023,
-  2024,
-]
+import { useState } from 'react'
+import PropTypes from 'prop-types'
+import { YearContext } from './YearContextState'
+import { AVAILABLE_YEARS, DEFAULT_YEAR } from '../constants'
 
 /**
- * React Context provider component that wraps the application and supplies
- * the active selected audit year and setter function to all child pages.
- * @param {Object} props - Component props containing children.
- * @returns {JSX.Element} Context provider component.
+ * React Context provider component supplying active selected audit year to child components.
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - Child components.
  */
 export function YearProvider({ children }) {
-  const [selectedYear, setSelectedYear] = useState('ALL')
+  const [selectedYear, setSelectedYear] = useState(DEFAULT_YEAR)
 
   return (
     <YearContext.Provider
@@ -44,10 +24,6 @@ export function YearProvider({ children }) {
   )
 }
 
-/**
- * Custom React hook to access the shared year selection state.
- * @returns {{ selectedYear: string|number, setSelectedYear: Function, availableYears: Array }} Year context value.
- */
-export function useYear() {
-  return useContext(YearContext)
+YearProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 }

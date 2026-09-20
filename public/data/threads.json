@@ -1,1 +1,721 @@
-{"method":"Edges link events whose dates are within 10 days (music<->life), share an artist, or are money moves within 5 days. At most 3 strongest edges per event. Proximity suggests a story; it does not prove cause.","edges":[{"a":"e002","b":"e003","days":0,"weight":0.9,"why":"Same artist (artist) within 0 days."},{"a":"e013","b":"e014","days":10,"weight":0.9,"why":"Same artist (artist) within 10 days."},{"a":"e013","b":"e015","days":10,"weight":0.9,"why":"Same artist (artist) within 10 days."},{"a":"e013","b":"e016","days":10,"weight":0.9,"why":"Same artist (artist) within 10 days."},{"a":"e014","b":"e015","days":0,"weight":0.9,"why":"Same artist (artist) within 0 days."},{"a":"e014","b":"e016","days":0,"weight":0.9,"why":"Same artist (artist) within 0 days."},{"a":"e015","b":"e016","days":0,"weight":0.9,"why":"Same artist (artist) within 0 days."},{"a":"e017","b":"e018","days":1,"weight":0.9,"why":"Same artist (artist) within 1 days."},{"a":"e017","b":"e019","days":7,"weight":0.9,"why":"Same artist (artist) within 7 days."},{"a":"e018","b":"e019","days":6,"weight":0.9,"why":"Same artist (artist) within 6 days."},{"a":"e020","b":"e021","days":4,"weight":0.9,"why":"Same artist (artist) within 4 days."},{"a":"e031","b":"e035","days":8,"weight":0.9,"why":"Same artist (artist) within 8 days."},{"a":"e032","b":"e033","days":1,"weight":0.9,"why":"Same artist (The Beatles) within 1 days."},{"a":"e032","b":"e034","days":1,"weight":0.9,"why":"Same artist (The Beatles) within 1 days."},{"a":"e033","b":"e034","days":0,"weight":0.9,"why":"Same artist (The Beatles) within 0 days."},{"a":"e052","b":"e053","days":0,"weight":0.9,"why":"Same artist (The Beatles) within 0 days."},{"a":"e060","b":"e061","days":2,"weight":0.9,"why":"Same artist (The Beatles) within 2 days."},{"a":"e074","b":"e075","days":2,"weight":0.9,"why":"Same artist (The Beatles) within 2 days."},{"a":"e083","b":"e084","days":4,"weight":0.9,"why":"Same artist (The Killers) within 4 days."},{"a":"e051","b":"e052","days":2,"weight":0.81,"why":"Within 2 days: a music moment and a life/money moment landed together."},{"a":"e051","b":"e053","days":2,"weight":0.78,"why":"Within 2 days: a music moment and a life/money moment landed together."},{"a":"e055","b":"e056","days":4,"weight":0.68,"why":"Within 4 days: a music moment and a life/money moment landed together."},{"a":"e039","b":"e040","days":3,"weight":0.64,"why":"Within 3 days: a music moment and a life/money moment landed together."},{"a":"e038","b":"e040","days":3,"weight":0.63,"why":"Within 3 days: a music moment and a life/money moment landed together."},{"a":"e024","b":"e025","days":0,"weight":0.6,"why":"Two money moments within 0 days of each other."},{"a":"e038","b":"e039","days":0,"weight":0.6,"why":"Two money moments within 0 days of each other."},{"a":"e043","b":"e044","days":4,"weight":0.6,"why":"Within 4 days: a music moment and a life/money moment landed together."},{"a":"e048","b":"e049","days":0,"weight":0.6,"why":"Two money moments within 0 days of each other."},{"a":"e064","b":"e065","days":0,"weight":0.6,"why":"Two money moments within 0 days of each other."},{"a":"e066","b":"e067","days":0,"weight":0.6,"why":"Two money moments within 0 days of each other."},{"a":"e068","b":"e069","days":0,"weight":0.6,"why":"Two money moments within 0 days of each other."},{"a":"e037","b":"e040","days":4,"weight":0.56,"why":"Within 4 days: a music moment and a life/money moment landed together."},{"a":"e037","b":"e038","days":1,"weight":0.5,"why":"Two money moments within 1 days of each other."},{"a":"e037","b":"e039","days":1,"weight":0.5,"why":"Two money moments within 1 days of each other."},{"a":"e048","b":"e050","days":1,"weight":0.5,"why":"Two money moments within 1 days of each other."},{"a":"e049","b":"e050","days":1,"weight":0.5,"why":"Two money moments within 1 days of each other."},{"a":"e009","b":"e010","days":2,"weight":0.4,"why":"Two money moments within 2 days of each other."},{"a":"e042","b":"e044","days":7,"weight":0.32,"why":"Within 7 days: a music moment and a life/money moment landed together."},{"a":"e029","b":"e030","days":81,"weight":1.0,"why":"Story link: 81 days later"},{"a":"e030","b":"e032","days":55,"weight":1.0,"why":"Story link: 55 days later"},{"a":"e032","b":"e034","days":1,"weight":1.0,"why":"Story link: 1 days later"},{"a":"e034","b":"e033","days":0,"weight":1.0,"why":"Story link: same day"},{"a":"e033","b":"e036","days":27,"weight":1.0,"why":"Story link: 27 days later"},{"a":"e036","b":"e037","days":2,"weight":1.0,"why":"Story link: 2 days later"},{"a":"e037","b":"e039","days":1,"weight":1.0,"why":"Story link: 1 days later"},{"a":"e039","b":"e040","days":3,"weight":1.0,"why":"Story link: 3 days later"},{"a":"e008","b":"e009","days":5,"weight":1.0,"why":"Story link: 5 days later"},{"a":"e009","b":"e010","days":2,"weight":1.0,"why":"Story link: 2 days later"},{"a":"e010","b":"e011","days":57,"weight":1.0,"why":"Story link: 57 days later"},{"a":"e047","b":"e051","days":15,"weight":1.0,"why":"Story link: 15 days later"},{"a":"e051","b":"e053","days":2,"weight":1.0,"why":"Story link: 2 days later"},{"a":"e053","b":"e056","days":43,"weight":1.0,"why":"Story link: 43 days later"},{"a":"e056","b":"e057","days":11,"weight":1.0,"why":"Story link: 11 days later"},{"a":"e057","b":"e059","days":34,"weight":1.0,"why":"Story link: 34 days later"},{"a":"e059","b":"e064","days":77,"weight":1.0,"why":"Story link: 77 days later"},{"a":"e064","b":"e066","days":9,"weight":1.0,"why":"Story link: 9 days later"},{"a":"e001","b":"e004","days":71,"weight":1.0,"why":"Story link: 71 days later"},{"a":"e004","b":"e005","days":114,"weight":1.0,"why":"Story link: 114 days later"},{"a":"e005","b":"e007","days":368,"weight":1.0,"why":"Story link: 368 days later"},{"a":"e081","b":"e082","days":122,"weight":1.0,"why":"Story link: 122 days later"},{"a":"e082","b":"e083","days":7,"weight":1.0,"why":"Story link: 7 days later"},{"a":"e083","b":"e086","days":120,"weight":1.0,"why":"Story link: 120 days later"}],"clusters":[{"id":"s01","curated":true,"title":"The Winter Pivot","chapter":"ch3","nodes":["e029","e030","e032","e034","e033","e036","e037","e039","e040"],"edges":[{"a":"e029","b":"e030","days":81,"weight":1.0,"why":"Story link: 81 days later"},{"a":"e030","b":"e032","days":55,"weight":1.0,"why":"Story link: 55 days later"},{"a":"e032","b":"e034","days":1,"weight":1.0,"why":"Story link: 1 days later"},{"a":"e034","b":"e033","days":0,"weight":1.0,"why":"Story link: same day"},{"a":"e033","b":"e036","days":27,"weight":1.0,"why":"Story link: 27 days later"},{"a":"e036","b":"e037","days":2,"weight":1.0,"why":"Story link: 2 days later"},{"a":"e037","b":"e039","days":1,"weight":1.0,"why":"Story link: 1 days later"},{"a":"e039","b":"e040","days":3,"weight":1.0,"why":"Story link: 3 days later"}],"start":"2016-07-18","end":"2017-01-04","confidence":"story","score":99,"narrative":"Netflix arrives in October 2016. Beatles plays jump from 1 in October to 77 in November and 526 in December, with a 170-play day landing on the same day as Rs 50,000 going out (Rs 40,000 of it into a provident fund). Tata Sky and an edtech course follow at year-end, then a Rs 1.01 lakh day on 1 Jan and another Beatles binge on 4 Jan. New habits, all at once.","summary":"9 moments across 171 days."},{"id":"s02","curated":true,"title":"First Paycheque, First Savings","chapter":"ch2","nodes":["e008","e009","e010","e011"],"edges":[{"a":"e008","b":"e009","days":5,"weight":1.0,"why":"Story link: 5 days later"},{"a":"e009","b":"e010","days":2,"weight":1.0,"why":"Story link: 2 days later"},{"a":"e010","b":"e011","days":57,"weight":1.0,"why":"Story link: 57 days later"}],"start":"2015-02-28","end":"2015-05-03","confidence":"story","score":99,"narrative":"The first salary is credited on 28 Feb 2015. Within a week money is already moving into an investment account and a recurring deposit; a provident-fund contribution follows two months later. Saving is a habit from day one.","summary":"4 moments across 65 days."},{"id":"s03","curated":true,"title":"The Investor Year","chapter":"ch4","nodes":["e047","e051","e053","e056","e057","e059","e064","e066"],"edges":[{"a":"e047","b":"e051","days":15,"weight":1.0,"why":"Story link: 15 days later"},{"a":"e051","b":"e053","days":2,"weight":1.0,"why":"Story link: 2 days later"},{"a":"e053","b":"e056","days":43,"weight":1.0,"why":"Story link: 43 days later"},{"a":"e056","b":"e057","days":11,"weight":1.0,"why":"Story link: 11 days later"},{"a":"e057","b":"e059","days":34,"weight":1.0,"why":"Story link: 34 days later"},{"a":"e059","b":"e064","days":77,"weight":1.0,"why":"Story link: 77 days later"},{"a":"e064","b":"e066","days":9,"weight":1.0,"why":"Story link: 9 days later"}],"start":"2017-06-27","end":"2018-01-04","confidence":"story","score":99,"narrative":"2017 has the most plays of any year (26,320) and the most ledger entries (1,035). July and September 2017 are the two busiest listening months ever. The money moves get bigger too: a 3-year Rs 2 lakh fixed deposit in June, Rs 1 lakh into a mutual fund in July, Rs 1.5 lakh into the share market in October, a Rs 2.5 lakh fixed deposit in December, then SIP redemptions worth about Rs 2.2 lakh on 4 Jan 2018.","summary":"8 moments across 192 days."},{"id":"s04","curated":true,"title":"The Long Silence","chapter":"ch1","nodes":["e001","e004","e005","e007"],"edges":[{"a":"e001","b":"e004","days":71,"weight":1.0,"why":"Story link: 71 days later"},{"a":"e004","b":"e005","days":114,"weight":1.0,"why":"Story link: 114 days later"},{"a":"e005","b":"e007","days":368,"weight":1.0,"why":"Story link: 368 days later"}],"start":"2013-07-08","end":"2015-01-12","confidence":"story","score":99,"narrative":"The first receipt is a 2:44 AM play on 8 Jul 2013 (UTC). Then comes silence: 112 days with no plays, then a 368-day gap, then 142 more. Listening only really begins in mid-2015.","summary":"4 moments across 554 days."},{"id":"s05","curated":true,"title":"Peak Volume","chapter":"ch5","nodes":["e081","e082","e083","e086"],"edges":[{"a":"e081","b":"e082","days":122,"weight":1.0,"why":"Story link: 122 days later"},{"a":"e082","b":"e083","days":7,"weight":1.0,"why":"Story link: 7 days later"},{"a":"e083","b":"e086","days":120,"weight":1.0,"why":"Story link: 120 days later"}],"start":"2020-04-15","end":"2020-12-20","confidence":"story","score":99,"narrative":"2020 is the loudest year by hours (921). Two days run past 13 hours of music (15 Aug and 20 Dec), with single-artist binges in between: 166 Beatles plays on 15 Apr and 152 Killers plays on 22 Aug.","summary":"4 moments across 250 days."},{"nodes":["e042","e043","e044"],"edges":[{"a":"e043","b":"e044","days":4,"weight":0.6,"why":"Within 4 days: a music moment and a life/money moment landed together."},{"a":"e042","b":"e044","days":7,"weight":0.32,"why":"Within 7 days: a music moment and a life/money moment landed together."}],"start":"2017-04-14","end":"2017-04-21","score":4.98,"chapter":"ch4","id":"c03","title":"April 2017","summary":"2 music moments and 1 life/money moment within 8 days.","confidence":"low"}]}
+{
+  "method": "Edges link events whose dates are within 10 days (music<->life), share an artist, or are money moves within 5 days. At most 3 strongest edges per event. Proximity suggests a story; it does not prove cause.",
+  "edges": [
+    {
+      "a": "e002",
+      "b": "e003",
+      "days": 0,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 0 days."
+    },
+    {
+      "a": "e013",
+      "b": "e014",
+      "days": 10,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 10 days."
+    },
+    {
+      "a": "e013",
+      "b": "e015",
+      "days": 10,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 10 days."
+    },
+    {
+      "a": "e013",
+      "b": "e016",
+      "days": 10,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 10 days."
+    },
+    {
+      "a": "e014",
+      "b": "e015",
+      "days": 0,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 0 days."
+    },
+    {
+      "a": "e014",
+      "b": "e016",
+      "days": 0,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 0 days."
+    },
+    {
+      "a": "e015",
+      "b": "e016",
+      "days": 0,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 0 days."
+    },
+    {
+      "a": "e017",
+      "b": "e018",
+      "days": 1,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 1 days."
+    },
+    {
+      "a": "e017",
+      "b": "e019",
+      "days": 7,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 7 days."
+    },
+    {
+      "a": "e018",
+      "b": "e019",
+      "days": 6,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 6 days."
+    },
+    {
+      "a": "e020",
+      "b": "e021",
+      "days": 4,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 4 days."
+    },
+    {
+      "a": "e031",
+      "b": "e035",
+      "days": 8,
+      "weight": 0.9,
+      "why": "Same artist (artist) within 8 days."
+    },
+    {
+      "a": "e032",
+      "b": "e033",
+      "days": 1,
+      "weight": 0.9,
+      "why": "Same artist (The Beatles) within 1 days."
+    },
+    {
+      "a": "e032",
+      "b": "e034",
+      "days": 1,
+      "weight": 0.9,
+      "why": "Same artist (The Beatles) within 1 days."
+    },
+    {
+      "a": "e033",
+      "b": "e034",
+      "days": 0,
+      "weight": 0.9,
+      "why": "Same artist (The Beatles) within 0 days."
+    },
+    {
+      "a": "e052",
+      "b": "e053",
+      "days": 0,
+      "weight": 0.9,
+      "why": "Same artist (The Beatles) within 0 days."
+    },
+    {
+      "a": "e060",
+      "b": "e061",
+      "days": 2,
+      "weight": 0.9,
+      "why": "Same artist (The Beatles) within 2 days."
+    },
+    {
+      "a": "e074",
+      "b": "e075",
+      "days": 2,
+      "weight": 0.9,
+      "why": "Same artist (The Beatles) within 2 days."
+    },
+    {
+      "a": "e083",
+      "b": "e084",
+      "days": 4,
+      "weight": 0.9,
+      "why": "Same artist (The Killers) within 4 days."
+    },
+    {
+      "a": "e051",
+      "b": "e052",
+      "days": 2,
+      "weight": 0.81,
+      "why": "Within 2 days: a music moment and a life/money moment landed together."
+    },
+    {
+      "a": "e051",
+      "b": "e053",
+      "days": 2,
+      "weight": 0.78,
+      "why": "Within 2 days: a music moment and a life/money moment landed together."
+    },
+    {
+      "a": "e055",
+      "b": "e056",
+      "days": 4,
+      "weight": 0.68,
+      "why": "Within 4 days: a music moment and a life/money moment landed together."
+    },
+    {
+      "a": "e039",
+      "b": "e040",
+      "days": 3,
+      "weight": 0.64,
+      "why": "Within 3 days: a music moment and a life/money moment landed together."
+    },
+    {
+      "a": "e038",
+      "b": "e040",
+      "days": 3,
+      "weight": 0.63,
+      "why": "Within 3 days: a music moment and a life/money moment landed together."
+    },
+    {
+      "a": "e024",
+      "b": "e025",
+      "days": 0,
+      "weight": 0.6,
+      "why": "Two money moments within 0 days of each other."
+    },
+    {
+      "a": "e038",
+      "b": "e039",
+      "days": 0,
+      "weight": 0.6,
+      "why": "Two money moments within 0 days of each other."
+    },
+    {
+      "a": "e043",
+      "b": "e044",
+      "days": 4,
+      "weight": 0.6,
+      "why": "Within 4 days: a music moment and a life/money moment landed together."
+    },
+    {
+      "a": "e048",
+      "b": "e049",
+      "days": 0,
+      "weight": 0.6,
+      "why": "Two money moments within 0 days of each other."
+    },
+    {
+      "a": "e064",
+      "b": "e065",
+      "days": 0,
+      "weight": 0.6,
+      "why": "Two money moments within 0 days of each other."
+    },
+    {
+      "a": "e066",
+      "b": "e067",
+      "days": 0,
+      "weight": 0.6,
+      "why": "Two money moments within 0 days of each other."
+    },
+    {
+      "a": "e068",
+      "b": "e069",
+      "days": 0,
+      "weight": 0.6,
+      "why": "Two money moments within 0 days of each other."
+    },
+    {
+      "a": "e037",
+      "b": "e040",
+      "days": 4,
+      "weight": 0.56,
+      "why": "Within 4 days: a music moment and a life/money moment landed together."
+    },
+    {
+      "a": "e037",
+      "b": "e038",
+      "days": 1,
+      "weight": 0.5,
+      "why": "Two money moments within 1 days of each other."
+    },
+    {
+      "a": "e037",
+      "b": "e039",
+      "days": 1,
+      "weight": 0.5,
+      "why": "Two money moments within 1 days of each other."
+    },
+    {
+      "a": "e048",
+      "b": "e050",
+      "days": 1,
+      "weight": 0.5,
+      "why": "Two money moments within 1 days of each other."
+    },
+    {
+      "a": "e049",
+      "b": "e050",
+      "days": 1,
+      "weight": 0.5,
+      "why": "Two money moments within 1 days of each other."
+    },
+    {
+      "a": "e009",
+      "b": "e010",
+      "days": 2,
+      "weight": 0.4,
+      "why": "Two money moments within 2 days of each other."
+    },
+    {
+      "a": "e042",
+      "b": "e044",
+      "days": 7,
+      "weight": 0.32,
+      "why": "Within 7 days: a music moment and a life/money moment landed together."
+    },
+    {
+      "a": "e029",
+      "b": "e030",
+      "days": 81,
+      "weight": 1.0,
+      "why": "Story link: 81 days later"
+    },
+    {
+      "a": "e030",
+      "b": "e032",
+      "days": 55,
+      "weight": 1.0,
+      "why": "Story link: 55 days later"
+    },
+    {
+      "a": "e032",
+      "b": "e034",
+      "days": 1,
+      "weight": 1.0,
+      "why": "Story link: 1 days later"
+    },
+    {
+      "a": "e034",
+      "b": "e033",
+      "days": 0,
+      "weight": 1.0,
+      "why": "Story link: same day"
+    },
+    {
+      "a": "e033",
+      "b": "e036",
+      "days": 27,
+      "weight": 1.0,
+      "why": "Story link: 27 days later"
+    },
+    {
+      "a": "e036",
+      "b": "e037",
+      "days": 2,
+      "weight": 1.0,
+      "why": "Story link: 2 days later"
+    },
+    {
+      "a": "e037",
+      "b": "e039",
+      "days": 1,
+      "weight": 1.0,
+      "why": "Story link: 1 days later"
+    },
+    {
+      "a": "e039",
+      "b": "e040",
+      "days": 3,
+      "weight": 1.0,
+      "why": "Story link: 3 days later"
+    },
+    {
+      "a": "e008",
+      "b": "e009",
+      "days": 5,
+      "weight": 1.0,
+      "why": "Story link: 5 days later"
+    },
+    {
+      "a": "e009",
+      "b": "e010",
+      "days": 2,
+      "weight": 1.0,
+      "why": "Story link: 2 days later"
+    },
+    {
+      "a": "e010",
+      "b": "e011",
+      "days": 57,
+      "weight": 1.0,
+      "why": "Story link: 57 days later"
+    },
+    {
+      "a": "e047",
+      "b": "e051",
+      "days": 15,
+      "weight": 1.0,
+      "why": "Story link: 15 days later"
+    },
+    {
+      "a": "e051",
+      "b": "e053",
+      "days": 2,
+      "weight": 1.0,
+      "why": "Story link: 2 days later"
+    },
+    {
+      "a": "e053",
+      "b": "e056",
+      "days": 43,
+      "weight": 1.0,
+      "why": "Story link: 43 days later"
+    },
+    {
+      "a": "e056",
+      "b": "e057",
+      "days": 11,
+      "weight": 1.0,
+      "why": "Story link: 11 days later"
+    },
+    {
+      "a": "e057",
+      "b": "e059",
+      "days": 34,
+      "weight": 1.0,
+      "why": "Story link: 34 days later"
+    },
+    {
+      "a": "e059",
+      "b": "e064",
+      "days": 77,
+      "weight": 1.0,
+      "why": "Story link: 77 days later"
+    },
+    {
+      "a": "e064",
+      "b": "e066",
+      "days": 9,
+      "weight": 1.0,
+      "why": "Story link: 9 days later"
+    },
+    {
+      "a": "e001",
+      "b": "e004",
+      "days": 71,
+      "weight": 1.0,
+      "why": "Story link: 71 days later"
+    },
+    {
+      "a": "e004",
+      "b": "e005",
+      "days": 114,
+      "weight": 1.0,
+      "why": "Story link: 114 days later"
+    },
+    {
+      "a": "e005",
+      "b": "e007",
+      "days": 368,
+      "weight": 1.0,
+      "why": "Story link: 368 days later"
+    },
+    {
+      "a": "e081",
+      "b": "e082",
+      "days": 122,
+      "weight": 1.0,
+      "why": "Story link: 122 days later"
+    },
+    {
+      "a": "e082",
+      "b": "e083",
+      "days": 7,
+      "weight": 1.0,
+      "why": "Story link: 7 days later"
+    },
+    {
+      "a": "e083",
+      "b": "e086",
+      "days": 120,
+      "weight": 1.0,
+      "why": "Story link: 120 days later"
+    }
+  ],
+  "clusters": [
+    {
+      "id": "s01",
+      "curated": true,
+      "title": "The Winter Pivot",
+      "chapter": "ch3",
+      "nodes": [
+        "e029",
+        "e030",
+        "e032",
+        "e034",
+        "e033",
+        "e036",
+        "e037",
+        "e039",
+        "e040"
+      ],
+      "edges": [
+        {
+          "a": "e029",
+          "b": "e030",
+          "days": 81,
+          "weight": 1.0,
+          "why": "Story link: 81 days later"
+        },
+        {
+          "a": "e030",
+          "b": "e032",
+          "days": 55,
+          "weight": 1.0,
+          "why": "Story link: 55 days later"
+        },
+        {
+          "a": "e032",
+          "b": "e034",
+          "days": 1,
+          "weight": 1.0,
+          "why": "Story link: 1 days later"
+        },
+        {
+          "a": "e034",
+          "b": "e033",
+          "days": 0,
+          "weight": 1.0,
+          "why": "Story link: same day"
+        },
+        {
+          "a": "e033",
+          "b": "e036",
+          "days": 27,
+          "weight": 1.0,
+          "why": "Story link: 27 days later"
+        },
+        {
+          "a": "e036",
+          "b": "e037",
+          "days": 2,
+          "weight": 1.0,
+          "why": "Story link: 2 days later"
+        },
+        {
+          "a": "e037",
+          "b": "e039",
+          "days": 1,
+          "weight": 1.0,
+          "why": "Story link: 1 days later"
+        },
+        {
+          "a": "e039",
+          "b": "e040",
+          "days": 3,
+          "weight": 1.0,
+          "why": "Story link: 3 days later"
+        }
+      ],
+      "start": "2016-07-18",
+      "end": "2017-01-04",
+      "confidence": "story",
+      "score": 99,
+      "narrative": "Netflix arrives in October 2016. Beatles plays jump from 1 in October to 77 in November and 526 in December, with a 170-play day landing on the same day as Rs 50,000 going out (Rs 40,000 of it into a provident fund). Tata Sky and an edtech course follow at year-end, then a Rs 1.01 lakh day on 1 Jan and another Beatles binge on 4 Jan. New habits, all at once.",
+      "summary": "9 moments across 171 days."
+    },
+    {
+      "id": "s02",
+      "curated": true,
+      "title": "First Paycheque, First Savings",
+      "chapter": "ch2",
+      "nodes": ["e008", "e009", "e010", "e011"],
+      "edges": [
+        {
+          "a": "e008",
+          "b": "e009",
+          "days": 5,
+          "weight": 1.0,
+          "why": "Story link: 5 days later"
+        },
+        {
+          "a": "e009",
+          "b": "e010",
+          "days": 2,
+          "weight": 1.0,
+          "why": "Story link: 2 days later"
+        },
+        {
+          "a": "e010",
+          "b": "e011",
+          "days": 57,
+          "weight": 1.0,
+          "why": "Story link: 57 days later"
+        }
+      ],
+      "start": "2015-02-28",
+      "end": "2015-05-03",
+      "confidence": "story",
+      "score": 99,
+      "narrative": "The first salary is credited on 28 Feb 2015. Within a week money is already moving into an investment account and a recurring deposit; a provident-fund contribution follows two months later. Saving is a habit from day one.",
+      "summary": "4 moments across 65 days."
+    },
+    {
+      "id": "s03",
+      "curated": true,
+      "title": "The Investor Year",
+      "chapter": "ch4",
+      "nodes": ["e047", "e051", "e053", "e056", "e057", "e059", "e064", "e066"],
+      "edges": [
+        {
+          "a": "e047",
+          "b": "e051",
+          "days": 15,
+          "weight": 1.0,
+          "why": "Story link: 15 days later"
+        },
+        {
+          "a": "e051",
+          "b": "e053",
+          "days": 2,
+          "weight": 1.0,
+          "why": "Story link: 2 days later"
+        },
+        {
+          "a": "e053",
+          "b": "e056",
+          "days": 43,
+          "weight": 1.0,
+          "why": "Story link: 43 days later"
+        },
+        {
+          "a": "e056",
+          "b": "e057",
+          "days": 11,
+          "weight": 1.0,
+          "why": "Story link: 11 days later"
+        },
+        {
+          "a": "e057",
+          "b": "e059",
+          "days": 34,
+          "weight": 1.0,
+          "why": "Story link: 34 days later"
+        },
+        {
+          "a": "e059",
+          "b": "e064",
+          "days": 77,
+          "weight": 1.0,
+          "why": "Story link: 77 days later"
+        },
+        {
+          "a": "e064",
+          "b": "e066",
+          "days": 9,
+          "weight": 1.0,
+          "why": "Story link: 9 days later"
+        }
+      ],
+      "start": "2017-06-27",
+      "end": "2018-01-04",
+      "confidence": "story",
+      "score": 99,
+      "narrative": "2017 has the most plays of any year (26,320) and the most ledger entries (1,035). July and September 2017 are the two busiest listening months ever. The money moves get bigger too: a 3-year Rs 2 lakh fixed deposit in June, Rs 1 lakh into a mutual fund in July, Rs 1.5 lakh into the share market in October, a Rs 2.5 lakh fixed deposit in December, then SIP redemptions worth about Rs 2.2 lakh on 4 Jan 2018.",
+      "summary": "8 moments across 192 days."
+    },
+    {
+      "id": "s04",
+      "curated": true,
+      "title": "The Long Silence",
+      "chapter": "ch1",
+      "nodes": ["e001", "e004", "e005", "e007"],
+      "edges": [
+        {
+          "a": "e001",
+          "b": "e004",
+          "days": 71,
+          "weight": 1.0,
+          "why": "Story link: 71 days later"
+        },
+        {
+          "a": "e004",
+          "b": "e005",
+          "days": 114,
+          "weight": 1.0,
+          "why": "Story link: 114 days later"
+        },
+        {
+          "a": "e005",
+          "b": "e007",
+          "days": 368,
+          "weight": 1.0,
+          "why": "Story link: 368 days later"
+        }
+      ],
+      "start": "2013-07-08",
+      "end": "2015-01-12",
+      "confidence": "story",
+      "score": 99,
+      "narrative": "The first receipt is a 2:44 AM play on 8 Jul 2013 (UTC). Then comes silence: 112 days with no plays, then a 368-day gap, then 142 more. Listening only really begins in mid-2015.",
+      "summary": "4 moments across 554 days."
+    },
+    {
+      "id": "s05",
+      "curated": true,
+      "title": "Peak Volume",
+      "chapter": "ch5",
+      "nodes": ["e081", "e082", "e083", "e086"],
+      "edges": [
+        {
+          "a": "e081",
+          "b": "e082",
+          "days": 122,
+          "weight": 1.0,
+          "why": "Story link: 122 days later"
+        },
+        {
+          "a": "e082",
+          "b": "e083",
+          "days": 7,
+          "weight": 1.0,
+          "why": "Story link: 7 days later"
+        },
+        {
+          "a": "e083",
+          "b": "e086",
+          "days": 120,
+          "weight": 1.0,
+          "why": "Story link: 120 days later"
+        }
+      ],
+      "start": "2020-04-15",
+      "end": "2020-12-20",
+      "confidence": "story",
+      "score": 99,
+      "narrative": "2020 is the loudest year by hours (921). Two days run past 13 hours of music (15 Aug and 20 Dec), with single-artist binges in between: 166 Beatles plays on 15 Apr and 152 Killers plays on 22 Aug.",
+      "summary": "4 moments across 250 days."
+    },
+    {
+      "nodes": ["e042", "e043", "e044"],
+      "edges": [
+        {
+          "a": "e043",
+          "b": "e044",
+          "days": 4,
+          "weight": 0.6,
+          "why": "Within 4 days: a music moment and a life/money moment landed together."
+        },
+        {
+          "a": "e042",
+          "b": "e044",
+          "days": 7,
+          "weight": 0.32,
+          "why": "Within 7 days: a music moment and a life/money moment landed together."
+        }
+      ],
+      "start": "2017-04-14",
+      "end": "2017-04-21",
+      "score": 4.98,
+      "chapter": "ch4",
+      "id": "c03",
+      "title": "April 2017",
+      "summary": "2 music moments and 1 life/money moment within 8 days.",
+      "confidence": "low"
+    }
+  ]
+}

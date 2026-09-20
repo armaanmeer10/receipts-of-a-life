@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ---- DESIGN TOKENS (neo-brutalism) ---- */
 @theme static {
@@ -27,7 +27,10 @@ body {
   color: var(--color-ink);
   font-family: var(--font-mono);
   background-color: var(--color-paper);
-  background-image: radial-gradient(rgba(17, 17, 17, 0.14) 1px, transparent 1px);
+  background-image: radial-gradient(
+    rgba(17, 17, 17, 0.14) 1px,
+    transparent 1px
+  );
   background-size: 18px 18px;
 }
 

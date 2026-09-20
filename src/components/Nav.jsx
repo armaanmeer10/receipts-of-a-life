@@ -1,15 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { playBeep } from '../lib/helpers'
-
-function PrinterIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" aria-hidden="true">
-      <path d="M7 9V3h10v6" />
-      <rect x="3" y="9" width="18" height="8" rx="1" />
-      <path d="M7 14h10v7H7z" fill="#ffe500" />
-    </svg>
-  )
-}
+import PropTypes from 'prop-types'
+import { playBeep } from '../utils/audio'
 
 const NAV_LINKS = [
   { label: 'HERO', to: '/' },
@@ -19,6 +10,9 @@ const NAV_LINKS = [
   { label: 'INSIGHTS', to: '/insights' },
 ]
 
+/**
+ * Global Header Navigation bar component.
+ */
 export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
   const navigate = useNavigate()
 
@@ -37,18 +31,29 @@ export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
   return (
     <header className="sticky top-0 z-50 border-b-[3px] border-ink bg-paper">
       <div className="flex items-center gap-3 px-4 py-3 md:px-8">
-        <img src="/favicon.svg" alt="Receipts of a Life logo" className="h-9 w-9 shrink-0 shadow-brut-sm" />
+        <img
+          src="/favicon.svg"
+          alt="Receipts of a Life logo"
+          className="h-9 w-9 shrink-0 shadow-brut-sm"
+        />
         <NavLink to="/" className="font-display text-sm font-bold leading-4">
-          RECEIPTS OF A<br />LIFE
+          RECEIPTS OF A<br />
+          LIFE
         </NavLink>
 
         {years && (
           <span className="hidden items-center gap-1 border-2 border-ink bg-sun px-2 py-1 text-[12px] font-bold tracking-wider xl:inline-flex">
-            <span className="text-hot" aria-hidden="true">●</span> LIVE THERMAL DISK: {years}
+            <span className="text-hot" aria-hidden="true">
+              ●
+            </span>{' '}
+            LIVE THERMAL DISK: {years}
           </span>
         )}
 
-        <nav className="ml-auto hidden items-center gap-2 lg:flex" aria-label="Page sections">
+        <nav
+          className="ml-auto hidden items-center gap-2 lg:flex"
+          aria-label="Page sections"
+        >
           {NAV_LINKS.map(({ label, to }) => (
             <NavLink
               key={to}
@@ -77,7 +82,11 @@ export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
               beepOn ? 'bg-mint text-ink' : 'bg-white text-ink/75'
             }`}
             aria-pressed={beepOn}
-            aria-label={beepOn ? 'Beep sound enabled – click to mute' : 'Beep sound muted – click to enable'}
+            aria-label={
+              beepOn
+                ? 'Beep sound enabled – click to mute'
+                : 'Beep sound muted – click to enable'
+            }
           >
             {beepOn ? '🔊 BEEP ON' : '🔇 BEEP OFF'}
           </button>
@@ -92,4 +101,12 @@ export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
       </div>
     </header>
   )
+}
+
+Nav.propTypes = {
+  years: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  paper: PropTypes.number,
+  beepOn: PropTypes.bool.isRequired,
+  onBeep: PropTypes.func.isRequired,
+  onPrint: PropTypes.func,
 }

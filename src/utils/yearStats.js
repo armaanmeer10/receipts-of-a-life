@@ -21,7 +21,7 @@ const KNOWN_ARTISTS = [
   'The Velvet Underground',
   'Arcade Fire',
   'Lou Reed',
-  'The Mowgli\'s',
+  "The Mowgli's",
   'Mumford & Sons',
   'John Lennon',
   'Juanes',
@@ -69,8 +69,8 @@ export function getYearStats(events = [], stats = {}, year = 'ALL') {
     : events.filter((e) => e.date && String(e.date).includes(String(year)))
 
   // 1. PLAYS & HOURS
-  let plays = null
-  let hours = null
+  let plays
+  let hours
 
   if (isAll) {
     plays = stats.plays || 149860
@@ -109,29 +109,46 @@ export function getYearStats(events = [], stats = {}, year = 'ALL') {
 
   // 2. PURCHASES (LEDGER ENTRIES)
   const financialEvents = yEvents.filter(
-    (e) => e.unit === 'INR' || ['income', 'investment', 'money', 'subscription'].includes(e.type)
+    (e) =>
+      e.unit === 'INR' ||
+      ['income', 'investment', 'money', 'subscription'].includes(e.type)
   )
   const purchases = isAll
     ? stats.purchases || 2461
     : financialEvents.length > 0
-    ? financialEvents.length
-    : null
+      ? financialEvents.length
+      : null
 
   // 3. TOTAL SPEND (Outflow)
   const spendEvents = yEvents.filter(
-    (e) => e.unit === 'INR' && e.value && e.value > 0 && e.kind !== 'salary_first' && e.kind !== 'maturity'
+    (e) =>
+      e.unit === 'INR' &&
+      e.value &&
+      e.value > 0 &&
+      e.kind !== 'salary_first' &&
+      e.kind !== 'maturity'
   )
-  const totalSpend = spendEvents.length > 0 ? spendEvents.reduce((s, e) => s + e.value, 0) : null
+  const totalSpend =
+    spendEvents.length > 0 ? spendEvents.reduce((s, e) => s + e.value, 0) : null
 
   // 4. SALARY INFLOW
   const salaryEvents = yEvents.filter(
-    (e) => e.kind === 'salary_first' || e.tags?.includes('salary') || e.tags?.includes('income')
+    (e) =>
+      e.kind === 'salary_first' ||
+      e.tags?.includes('salary') ||
+      e.tags?.includes('income')
   )
-  const salary = salaryEvents.length > 0 ? salaryEvents.reduce((s, e) => s + (e.value || 0), 0) : null
+  const salary =
+    salaryEvents.length > 0
+      ? salaryEvents.reduce((s, e) => s + (e.value || 0), 0)
+      : null
 
   // 5. INVESTMENTS
   const investmentEvents = yEvents.filter(
-    (e) => e.type === 'investment' || e.kind === 'investment' || e.tags?.includes('investing')
+    (e) =>
+      e.type === 'investment' ||
+      e.kind === 'investment' ||
+      e.tags?.includes('investing')
   )
   const investmentsCount = investmentEvents.length
   const investmentsTotal =
@@ -146,7 +163,8 @@ export function getYearStats(events = [], stats = {}, year = 'ALL') {
   const subscriptionsCount = subscriptionEvents.length
 
   // 7. TOP ARTISTS FOR YEAR
-  let topArtists = []
+  let topArtists
+
   if (isAll) {
     topArtists = (stats.top_artists || []).map((a) => ({
       name: a.artist.toUpperCase(),
@@ -169,13 +187,20 @@ export function getYearStats(events = [], stats = {}, year = 'ALL') {
         name: art.toUpperCase(),
         artist: art,
         plays: artistMap[art],
-        track: yEvents.find((e) => extractArtist(e) === art)?.title || 'AUDITED TRACK',
+        track:
+          yEvents.find((e) => extractArtist(e) === art)?.title ||
+          'AUDITED TRACK',
       }))
       .sort((a, b) => b.plays - a.plays)
 
     if (topArtists.length === 0 && plays != null) {
       topArtists = [
-        { name: 'THE BEATLES', artist: 'The Beatles', plays: Math.round(plays * 0.6), track: 'RECORDS AUDITED' },
+        {
+          name: 'THE BEATLES',
+          artist: 'The Beatles',
+          plays: Math.round(plays * 0.6),
+          track: 'RECORDS AUDITED',
+        },
       ]
     }
   }
@@ -183,20 +208,20 @@ export function getYearStats(events = [], stats = {}, year = 'ALL') {
   const topArtist = topArtists.length > 0 ? topArtists[0] : null
 
   // 8. BUSIEST MONTH
-  const peakEvt = yEvents.find((e) => e.kind === 'peak_month' || e.kind === 'surge')
+  const peakEvt = yEvents.find(
+    (e) => e.kind === 'peak_month' || e.kind === 'surge'
+  )
   const busiestMonth = peakEvt
     ? peakEvt.title.replace('Peak month: ', '').replace(' listening surge', '')
     : isAll
-    ? 'Sep 2017'
-    : null
+      ? 'Sep 2017'
+      : null
 
   // 9. NIGHT PLAYS
   const nightPlays = plays != null ? Math.round(plays * 0.295) : null
 
   // 10. DATE RANGE
-  const dateRange = isAll
-    ? '2013 – 2024'
-    : `JAN ${numYear} – DEC ${numYear}`
+  const dateRange = isAll ? '2013 – 2024' : `JAN ${numYear} – DEC ${numYear}`
 
   return {
     year: isAll ? 'ALL' : numYear,
