@@ -35,7 +35,7 @@ const FILTER_CATS = [
 ]
 
 /**
- * Top title, controls, and filter bar header component for String Board.
+ * Top title, controls, result counts, and filter bar header component for String Board.
  */
 export default function StringBoardHeader({
   selectedYear,
@@ -44,17 +44,25 @@ export default function StringBoardHeader({
   onSelectFilter,
   catCounts,
   correlationCount,
+  visibleCount,
+  totalCount,
+  onClearFilters,
 }) {
+  const isFiltered = activeFilter !== 'all' || selectedYear !== 'ALL'
+
   return (
     <>
       <div className="border-b-[3px] border-ink bg-paper px-4 py-5 md:px-8">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-3 flex flex-wrap gap-2">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
             <span className="border-2 border-ink bg-[#ffd3e3] px-2.5 py-1 font-mono text-[12px] font-bold tracking-widest text-[#880e4f]">
               ⬛ CONFIDENTIAL DIGITAL AUDIT // CLASSIFIED
             </span>
             <span className="border-2 border-ink bg-mint px-2.5 py-1 font-mono text-[12px] font-bold tracking-widest text-ink">
               ✓ CRIME OF CONSUMPTION: SOLVED
+            </span>
+            <span className="ml-auto border border-ink bg-white px-2.5 py-1 font-mono text-[12px] font-bold tracking-wider text-ink shadow-brut-sm">
+              Showing {visibleCount} of {totalCount} receipts
             </span>
           </div>
 
@@ -74,7 +82,7 @@ export default function StringBoardHeader({
               panic deliveries, and irreversible life-pivot credit card
               authorisations.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <div className="border-[3px] border-ink bg-white px-4 py-2 shadow-brut-sm">
                 <div className="font-mono text-[12px] font-bold tracking-widest text-ink/70">
                   ACTIVE YEAR
@@ -85,13 +93,22 @@ export default function StringBoardHeader({
               </div>
               <div className="border-[3px] border-ink bg-sun px-4 py-2 shadow-brut-sm">
                 <div className="font-mono text-[12px] font-bold tracking-widest text-ink/80">
-                  ACTIVE CORRELATIONS
+                  CORRELATIONS
                 </div>
                 <div className="mt-0.5 font-display text-2xl font-bold leading-none text-ink">
                   {String(correlationCount).padStart(2, '0')}{' '}
                   <span className="font-mono text-xs">NODES</span>
                 </div>
               </div>
+              {isFiltered && (
+                <button
+                  onClick={onClearFilters}
+                  aria-label="Clear all filters"
+                  className="min-h-[44px] border-2 border-ink bg-hot px-3 py-2 font-mono text-xs font-bold tracking-wider text-ink shadow-[2px_2px_0_#111] hover:bg-hot/80"
+                >
+                  CLEAR FILTERS [ESC]
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -160,4 +177,7 @@ StringBoardHeader.propTypes = {
   onSelectFilter: PropTypes.func.isRequired,
   catCounts: PropTypes.object.isRequired,
   correlationCount: PropTypes.number.isRequired,
+  visibleCount: PropTypes.number.isRequired,
+  totalCount: PropTypes.number.isRequired,
+  onClearFilters: PropTypes.func.isRequired,
 }

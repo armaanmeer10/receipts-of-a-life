@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { motion } from 'framer-motion'
 
 /**
- * Neo-brutalist archetype card component for Insights page.
+ * Neo-brutalist archetype card component for Insights page with computed audit evidence.
  */
 export default function ArchetypeCard({ card, idx }) {
   return (
@@ -56,7 +56,17 @@ export default function ArchetypeCard({ card, idx }) {
           {card.mainStat}
         </p>
 
-        <div className="my-4 border-l-2 border-current py-1 pl-3 text-[12px] italic leading-relaxed opacity-90">
+        {/* ══ AUDIT EVIDENCE (Requirement 3) ══ */}
+        {card.evidence && (
+          <div className="my-2 border border-dashed border-current/50 bg-black/10 p-2 font-mono text-[11px] leading-tight">
+            <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider opacity-80">
+              AUDIT EVIDENCE:
+            </span>
+            <span>{card.evidence}</span>
+          </div>
+        )}
+
+        <div className="my-3 border-l-2 border-current py-1 pl-3 text-[12px] italic leading-relaxed opacity-90">
           {card.quote}
         </div>
       </div>
@@ -90,6 +100,7 @@ ArchetypeCard.propTypes = {
       })
     ).isRequired,
     mainStat: PropTypes.string.isRequired,
+    evidence: PropTypes.string,
     quote: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
     statusBadge: PropTypes.string.isRequired,

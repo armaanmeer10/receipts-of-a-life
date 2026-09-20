@@ -1,6 +1,6 @@
 /**
  * Explore Page: Read-only database console log interface with real-time text search, preset audit chips,
- * dynamic timeline scrubber playback, Exhibit A top artists audit, and Exhibit B purchase ledger donut.
+ * 15 data type filter buttons, timeline scrubber, Exhibit A top artists, and Exhibit B purchase ledger.
  */
 import { useState, useEffect, useMemo } from 'react'
 import PropTypes from 'prop-types'
@@ -19,6 +19,7 @@ import ExploreFilterResults from '../components/ExploreFilterResults'
 export default function Explore({ stats, events }) {
   const { selectedYear, setSelectedYear } = useYear()
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedKind, setSelectedKind] = useState('ALL')
   const [isPlaying, setIsPlaying] = useState(false)
 
   const yearStats = useMemo(() => {
@@ -29,6 +30,7 @@ export default function Explore({ stats, events }) {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setSearchQuery('')
+        setSelectedKind('ALL')
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -54,6 +56,11 @@ export default function Explore({ stats, events }) {
 
   const filteredEvents = useMemo(() => {
     let list = yearStats ? yearStats.events : events
+
+    if (selectedKind !== 'ALL') {
+      list = list.filter((e) => e.kind === selectedKind)
+    }
+
     if (!searchQuery.trim()) return list
 
     const q = searchQuery.toLowerCase()
@@ -64,7 +71,7 @@ export default function Explore({ stats, events }) {
         (e.tags && e.tags.some((t) => t.toLowerCase().includes(q))) ||
         (e.kind && e.kind.toLowerCase().includes(q))
     )
-  }, [events, yearStats, searchQuery])
+  }, [events, yearStats, selectedKind, searchQuery])
 
   const ledgerBreakdown = useMemo(() => {
     const targetEvents = yearStats ? yearStats.events : events
@@ -132,6 +139,13 @@ export default function Explore({ stats, events }) {
     return Math.max(...artistAudit.map((a) => a.plays), 1)
   }, [artistAudit])
 
+  const totalEventCount = yearStats ? yearStats.events.length : events.length
+
+  const handleClear = () => {
+    setSearchQuery('')
+    setSelectedKind('ALL')
+  }
+
   return (
     <main className="flex-1 max-w-full overflow-x-hidden bg-paper font-mono text-ink pb-12">
       <ExploreLogConsole
@@ -139,7 +153,11 @@ export default function Explore({ stats, events }) {
         yearStats={yearStats}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onClearSearch={() => setSearchQuery('')}
+        onClearSearch={handleClear}
+        selectedKind={selectedKind}
+        onSelectKind={setSelectedKind}
+        visibleCount={filteredEvents.length}
+        totalCount={totalEventCount}
       />
 
       <div className="mx-auto max-w-7xl px-4 py-6 md:px-8 space-y-6">
@@ -212,7 +230,7 @@ export default function Explore({ stats, events }) {
             selectedYear={selectedYear}
             artistAudit={artistAudit}
             maxArtistPlays={maxArtistPlays}
-            eventCount={yearStats.events.length}
+            eventCount={totalEventCount}
           />
 
           <ExplorePurchaseLedger
@@ -224,8 +242,9 @@ export default function Explore({ stats, events }) {
 
         <ExploreFilterResults
           searchQuery={searchQuery}
+          selectedKind={selectedKind}
           filteredEvents={filteredEvents}
-          onClear={() => setSearchQuery('')}
+          onClear={handleClear}
         />
       </div>
     </main>

@@ -26,7 +26,7 @@ function ScrollToTop() {
 }
 
 function MainApp() {
-  const { stats, events, loading, error } = useData()
+  const { stats, events, hours, loading, error } = useData()
   const [manualPrintCount, setManualPrintCount] = useState(0)
   const [beepOn, setBeepOn] = useState(true)
 
@@ -84,7 +84,7 @@ function MainApp() {
             />
             <Route
               path="/insights"
-              element={<Insights stats={stats} events={events} />}
+              element={<Insights stats={stats} events={events} hours={hours} />}
             />
           </Routes>
         </Suspense>

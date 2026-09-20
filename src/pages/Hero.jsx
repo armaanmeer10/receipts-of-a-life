@@ -1,8 +1,8 @@
 /**
  * Hero Page: Landing experience featuring thermal receipt printer animation, year selector,
- * interactive stat tiles, neo-brutalist stickers, and browser thermal print trigger.
+ * interactive stat tiles, neo-brutalist stickers, browser print, and "START THE STORY" walkthrough.
  */
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import { motion } from 'framer-motion'
 import { useYear } from '../hooks/useYear'
@@ -11,6 +11,7 @@ import { playBeep } from '../utils/audio'
 import YearSelector from '../components/YearSelector'
 import Printer from '../components/Printer'
 import Tile from '../components/Tile'
+import StoryWalkthroughModal from '../components/StoryWalkthroughModal'
 
 function PrinterIcon() {
   return (
@@ -57,6 +58,8 @@ const scrollToAudit = () =>
 
 export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
   const { selectedYear, setSelectedYear, availableYears } = useYear()
+  const [showStoryModal, setShowStoryModal] = useState(false)
+
   const yearStats = useMemo(
     () => getYearStats(events, stats, selectedYear),
     [events, stats, selectedYear]
@@ -70,6 +73,11 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
   const handleSaveReceipt = () => {
     if (beepOn) playBeep()
     window.print()
+  }
+
+  const handleStartStory = () => {
+    if (beepOn) playBeep()
+    setShowStoryModal(true)
   }
 
   return (
@@ -123,24 +131,32 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
           </div>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
+            {/* ══ START THE STORY BUTTON (Requirement 6) ══ */}
+            <button
+              onClick={handleStartStory}
+              aria-label="Start interactive 5-step story walkthrough"
+              className="flex min-h-[44px] items-center gap-2 border-[3px] border-ink bg-sun px-5 py-3 font-display text-sm font-bold tracking-wide shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none cursor-pointer"
+            >
+              <span>⚡</span> START THE STORY
+            </button>
             <button
               onClick={onReprint}
               aria-label="Print story receipt"
-              className="flex min-h-[44px] items-center gap-2 border-[3px] border-ink bg-sun px-5 py-3 font-display text-sm font-bold tracking-wide shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none"
+              className="flex min-h-[44px] items-center gap-2 border-[3px] border-ink bg-hot px-5 py-3 font-display text-sm font-bold tracking-wide shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none cursor-pointer"
             >
               <PrinterIcon /> PRINT MY STORY
             </button>
             <button
               onClick={handleSaveReceipt}
               aria-label="Save or print thermal receipt"
-              className="flex min-h-[44px] items-center gap-2 border-[3px] border-ink bg-mint px-5 py-3 font-display text-sm font-bold tracking-wide text-ink shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none"
+              className="flex min-h-[44px] items-center gap-2 border-[3px] border-ink bg-mint px-5 py-3 font-display text-sm font-bold tracking-wide text-ink shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none cursor-pointer"
             >
               <SaveIcon /> SAVE RECEIPT
             </button>
             <button
               onClick={scrollToAudit}
               aria-label="Read the audit – scroll down"
-              className="min-h-[44px] border-[3px] border-ink bg-white px-4 py-3 text-[12px] font-bold tracking-wider shadow-brut-sm transition hover:-translate-y-0.5 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+              className="min-h-[44px] border-[3px] border-ink bg-white px-4 py-3 text-[12px] font-bold tracking-wider shadow-brut-sm transition hover:-translate-y-0.5 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none cursor-pointer"
             >
               READ AUDIT ↓
             </button>
@@ -200,6 +216,15 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
           delay={0.5}
         />
       </section>
+
+      {/* ══ INTERACTIVE STORY WALKTHROUGH MODAL ══ */}
+      <StoryWalkthroughModal
+        isOpen={showStoryModal}
+        onClose={() => setShowStoryModal(false)}
+        stats={stats}
+        events={events}
+        onPrintReceipt={onReprint}
+      />
     </main>
   )
 }

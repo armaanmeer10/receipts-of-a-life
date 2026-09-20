@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 
 /**
- * Custom hook for asynchronously fetching stats.json and events.json dataset.
- * @returns {{ stats: Object|null, events: Array|null, loading: boolean, error: string|null }} Data loading state.
+ * Custom hook for asynchronously fetching stats.json, events.json, and hours.json dataset.
+ * @returns {{ stats: Object|null, events: Array|null, hours: Object|null, loading: boolean, error: string|null }} Data loading state.
  */
 export function useData() {
   const [stats, setStats] = useState(null)
   const [events, setEvents] = useState(null)
+  const [hours, setHours] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -22,11 +23,15 @@ export function useData() {
         if (!res.ok) throw new Error('Failed to fetch events.json')
         return res.json()
       }),
+      fetch('./data/hours.json')
+        .then((res) => (res.ok ? res.json() : null))
+        .catch(() => null),
     ])
-      .then(([statsData, eventsData]) => {
+      .then(([statsData, eventsData, hoursData]) => {
         if (isMounted) {
           setStats(statsData)
           setEvents(eventsData)
+          setHours(hoursData)
           setLoading(false)
         }
       })
@@ -42,5 +47,5 @@ export function useData() {
     }
   }, [])
 
-  return { stats, events, loading, error }
+  return { stats, events, hours, loading, error }
 }

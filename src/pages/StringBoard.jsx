@@ -2,9 +2,11 @@
  * StringBoard Page: Interactive corkboard conspiracy board connecting music scrobbles, financial receipts,
  * subscription stacks, and travel events using SVG red string paths and forensic investigation dossiers.
  */
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import { useSearchParams } from 'react-router-dom'
 import { useYear } from '../hooks/useYear'
+import { calculateConnections } from '../utils/connections'
 import StringBoardHeader from '../components/StringBoardHeader'
 import PinnedCard from '../components/PinnedCard'
 import StringLayer from '../components/StringLayer'
@@ -13,6 +15,7 @@ import Dossier from '../components/Dossier'
 const CARD_DEFS = [
   {
     id: 'c1',
+    eventId: 'e001',
     cx: 14,
     cy: 20,
     rotate: -2.5,
@@ -22,6 +25,7 @@ const CARD_DEFS = [
   },
   {
     id: 'c2',
+    eventId: 'e029',
     cx: 44,
     cy: 15,
     rotate: 2.5,
@@ -31,6 +35,7 @@ const CARD_DEFS = [
   },
   {
     id: 'c3',
+    eventId: 'e053',
     cx: 78,
     cy: 24,
     rotate: -1.5,
@@ -40,6 +45,7 @@ const CARD_DEFS = [
   },
   {
     id: 'c4',
+    eventId: 'e008',
     cx: 18,
     cy: 64,
     rotate: 1.5,
@@ -49,6 +55,7 @@ const CARD_DEFS = [
   },
   {
     id: 'c5',
+    eventId: 'e009',
     cx: 46,
     cy: 72,
     rotate: -2.5,
@@ -58,6 +65,7 @@ const CARD_DEFS = [
   },
   {
     id: 'c6',
+    eventId: 'e030',
     cx: 76,
     cy: 62,
     rotate: 1.5,
@@ -67,6 +75,7 @@ const CARD_DEFS = [
   },
   {
     id: 'c7',
+    eventId: 'e068',
     cx: 10,
     cy: 84,
     rotate: -3.5,
@@ -76,6 +85,7 @@ const CARD_DEFS = [
   },
   {
     id: 'c8',
+    eventId: 'e033',
     cx: 58,
     cy: 83,
     rotate: 2.0,
@@ -85,35 +95,12 @@ const CARD_DEFS = [
   },
 ]
 
-function getEvent(id, events) {
-  switch (id) {
-    case 'c1':
-      return events.find((e) => e.kind === 'first_play')
-    case 'c2':
-      return events.find(
-        (e) => e.kind === 'discovery' && e.detail?.includes('The Beatles')
-      )
-    case 'c3':
-      return [...events]
-        .filter((e) => e.kind === 'peak_month')
-        .sort((a, b) => b.value - a.value)[0]
-    case 'c4':
-      return events.find((e) => e.kind === 'salary_first')
-    case 'c5':
-      return events.find((e) => e.kind === 'investment')
-    case 'c6':
-      return events.find((e) => e.title?.includes('Netflix'))
-    case 'c7':
-      return events.find(
-        (e) => e.title?.includes('Bike') || e.detail?.includes('Bikedelux')
-      )
-    case 'c8':
-      return [...events]
-        .filter((e) => e.kind === 'binge')
-        .sort((a, b) => b.value - a.value)[0]
-    default:
-      return null
-  }
+function getEvent(def, events) {
+  return (
+    events.find((e) => e.id === def.eventId) ||
+    events.find((e) => e.id === def.id) ||
+    null
+  )
 }
 
 function buildConnections() {
@@ -135,8 +122,35 @@ const ALL_CONNECTIONS = buildConnections()
 
 export default function StringBoard({ events }) {
   const { selectedYear, setSelectedYear } = useYear()
+  const [searchParams] = useSearchParams()
   const [activeFilter, setActiveFilter] = useState('all')
-  const [selectedId, setSelectedId] = useState(null)
+  const [userSelectedId, setUserSelectedId] = useState(null)
+
+  // Derive deep-link card from URL param without setState-in-effect
+  const urlSelectedId = useMemo(() => {
+    const cardParam = searchParams.get('card')
+    if (!cardParam) return null
+    const matched = CARD_DEFS.find(
+      (c) => c.id === cardParam || c.eventId === cardParam
+    )
+    return matched ? matched.id : cardParam
+  }, [searchParams])
+
+  // User click overrides URL param; merge both sources
+  const selectedId = userSelectedId ?? urlSelectedId
+  const setSelectedId = setUserSelectedId
+
+  // Support Esc key to clear selection / filters
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setUserSelectedId(null)
+        setActiveFilter('all')
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [setUserSelectedId, setActiveFilter])
 
   const catCounts = useMemo(() => {
     const c = { all: CARD_DEFS.length }
@@ -144,10 +158,31 @@ export default function StringBoard({ events }) {
     return c
   }, [])
 
+  // Calculate live rule connections
+  const liveRulesCount = useMemo(() => {
+    return calculateConnections(events).length
+  }, [events])
+
+  const visibleCards = useMemo(() => {
+    return CARD_DEFS.filter((def) => {
+      const isCategoryHidden =
+        activeFilter !== 'all' && def.category !== activeFilter
+      const isYearHidden =
+        selectedYear !== 'ALL' && def.year !== Number(selectedYear)
+      return !isCategoryHidden && !isYearHidden
+    })
+  }, [activeFilter, selectedYear])
+
   const handleCard = (id) => setSelectedId((prev) => (prev === id ? null : id))
 
   const handleSelectFilter = (filterId) => {
     setActiveFilter(filterId)
+    setSelectedId(null)
+  }
+
+  const handleClearFilters = () => {
+    setActiveFilter('all')
+    setSelectedYear('ALL')
     setSelectedId(null)
   }
 
@@ -159,7 +194,10 @@ export default function StringBoard({ events }) {
         activeFilter={activeFilter}
         onSelectFilter={handleSelectFilter}
         catCounts={catCounts}
-        correlationCount={ALL_CONNECTIONS.length}
+        correlationCount={liveRulesCount || ALL_CONNECTIONS.length}
+        visibleCount={visibleCards.length}
+        totalCount={CARD_DEFS.length}
+        onClearFilters={handleClearFilters}
       />
 
       <div className="mx-auto grid max-w-7xl lg:grid-cols-[1fr_360px]">
@@ -198,26 +236,47 @@ export default function StringBoard({ events }) {
             selectedYear={selectedYear}
           />
 
-          {CARD_DEFS.map((def, i) => {
-            const event = getEvent(def.id, events)
-            const isCategoryHidden =
-              activeFilter !== 'all' && def.category !== activeFilter
-            const isYearHidden =
-              selectedYear !== 'ALL' && def.year !== Number(selectedYear)
-            const isHidden = isCategoryHidden || isYearHidden
+          {visibleCards.length === 0 ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center font-mono">
+              <div className="border-[3px] border-ink bg-white p-6 shadow-brut max-w-sm space-y-3">
+                <div className="text-4xl" aria-hidden="true">
+                  📌
+                </div>
+                <div className="font-display text-lg font-bold text-ink">
+                  NO EVIDENCE MATCHING CURRENT FILTER
+                </div>
+                <p className="text-xs text-ink/75">
+                  No pinned receipts found for category &quot;{activeFilter}
+                  &quot; in year {selectedYear}.
+                </p>
+                <button
+                  onClick={handleClearFilters}
+                  className="mt-2 border-2 border-ink bg-sun px-4 py-2 font-display text-xs font-bold tracking-wider text-ink shadow-[2px_2px_0_#111] hover:bg-sun/80"
+                >
+                  RESET EVIDENCE BOARD
+                </button>
+              </div>
+            </div>
+          ) : (
+            CARD_DEFS.map((def, i) => {
+              const event = getEvent(def, events)
+              const isHidden = !visibleCards.some((v) => v.id === def.id)
 
-            return (
-              <PinnedCard
-                key={def.id}
-                def={def}
-                event={event}
-                isSelected={selectedId === def.id}
-                isHidden={isHidden}
-                onClick={handleCard}
-                index={i}
-              />
-            )
-          })}
+              return (
+                <PinnedCard
+                  key={def.id}
+                  def={def}
+                  event={event}
+                  isSelected={
+                    selectedId === def.id || selectedId === def.eventId
+                  }
+                  isHidden={isHidden}
+                  onClick={handleCard}
+                  index={i}
+                />
+              )
+            })
+          )}
         </div>
 
         <div style={{ minHeight: 580, height: 580 }}>

@@ -1,11 +1,16 @@
 import PropTypes from 'prop-types'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { num, fmtDate } from '../utils/format'
+import { getConnectionsForEvent } from '../utils/connections'
+import { EVENT_KINDS } from '../constants'
 
 /**
- * Animated Chapter Detail view component for Story Roll.
+ * Animated Chapter Detail view component for Story Roll with type badges and "connected to" chips.
  */
 export default function ChapterDetail({ chapter, events, selectedYear }) {
+  const navigate = useNavigate()
+
   if (!chapter) return null
 
   let chEvents = events.filter((e) => e.chapter === chapter.id)
@@ -29,6 +34,11 @@ export default function ChapterDetail({ chapter, events, selectedYear }) {
   )
   const listEvents = chEvents.filter((e) => e !== highlight).slice(0, 8)
   const totalVal = chEvents.reduce((s, e) => s + (e.value || 0), 0)
+
+  const handleOpenOnBoard = (targetId) => {
+    navigate(`/board?card=${targetId}`)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -63,8 +73,17 @@ export default function ChapterDetail({ chapter, events, selectedYear }) {
 
         {highlight && (
           <div className="border-2 border-mint bg-mint/15 px-3 py-2">
-            <div className="mb-1 font-mono text-[12px] font-bold tracking-widest text-mint">
-              ▶ AUDIT SIGNAL VERIFIED
+            <div className="mb-1 flex items-center justify-between">
+              <span className="font-mono text-[12px] font-bold tracking-widest text-mint">
+                ▶ AUDIT SIGNAL VERIFIED
+              </span>
+              {EVENT_KINDS[highlight.kind] && (
+                <span
+                  className={`border px-1.5 py-0.2 font-mono text-[10px] font-bold ${EVENT_KINDS[highlight.kind].color}`}
+                >
+                  {EVENT_KINDS[highlight.kind].label}
+                </span>
+              )}
             </div>
             <div className="font-mono text-[12px] font-bold text-paper">
               {highlight.title}
@@ -85,28 +104,71 @@ export default function ChapterDetail({ chapter, events, selectedYear }) {
                 No records logged for this chapter in year {selectedYear}.
               </div>
             ) : (
-              listEvents.map((e) => (
-                <div
-                  key={e.id}
-                  className="flex items-start justify-between gap-3 px-3 py-2.5"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate font-mono text-[12px] font-bold text-paper">
-                      {e.title}
+              listEvents.map((e) => {
+                const kindMeta = EVENT_KINDS[e.kind]
+                const conns = getConnectionsForEvent(e.id, events)
+
+                return (
+                  <div key={e.id} className="flex flex-col gap-1.5 px-3 py-2.5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="truncate font-mono text-[12px] font-bold text-paper">
+                            {e.title}
+                          </span>
+                          {kindMeta && (
+                            <span
+                              className={`border px-1.5 py-0.2 font-mono text-[10px] font-bold ${kindMeta.color}`}
+                            >
+                              {kindMeta.label}
+                            </span>
+                          )}
+                        </div>
+                        <div className="font-mono text-[12px] text-paper/70">
+                          {fmtDate(e.date)}
+                        </div>
+                      </div>
+                      {e.value != null && (
+                        <div className="shrink-0 font-mono text-[12px] font-bold text-sun">
+                          {e.unit === 'INR'
+                            ? `₹${num(Math.round(e.value))}`
+                            : `${e.unit === 'plays' ? num(e.value) : e.value} ${e.unit}`}
+                        </div>
+                      )}
                     </div>
-                    <div className="font-mono text-[12px] text-paper/70">
-                      {fmtDate(e.date)}
-                    </div>
+
+                    {/* ══ CONNECTED TO CHIPS (Requirement 4) ══ */}
+                    {conns.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1 pt-1">
+                        <span className="font-mono text-[10px] text-paper/60 font-bold">
+                          LINKED:
+                        </span>
+                        {conns.slice(0, 2).map((c, i) => {
+                          const otherId = c.a === e.id ? c.b : c.a
+                          const otherEvt = events.find(
+                            (ev) => ev.id === otherId
+                          )
+                          const shortTitle = otherEvt?.title
+                            ? otherEvt.title.slice(0, 24) + '…'
+                            : otherId
+
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => handleOpenOnBoard(otherId)}
+                              aria-label={`Open connection to ${otherEvt?.title || otherId} on String Board`}
+                              className="inline-flex items-center gap-1 border border-paper/40 bg-paper/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-paper hover:border-hot hover:bg-hot hover:text-ink transition cursor-pointer"
+                            >
+                              <span>⚡</span>
+                              <span>{shortTitle}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
-                  {e.value != null && (
-                    <div className="shrink-0 font-mono text-[12px] font-bold text-sun">
-                      {e.unit === 'INR'
-                        ? `₹${num(Math.round(e.value))}`
-                        : `${e.unit === 'plays' ? num(e.value) : e.value} ${e.unit}`}
-                    </div>
-                  )}
-                </div>
-              ))
+                )
+              })
             )}
           </div>
         </div>

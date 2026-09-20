@@ -51,6 +51,119 @@ export const PRESET_CHIPS = [
   { label: 'Notes & Anomalies', query: 'silence' },
 ]
 
+/**
+ * Metadata and neo-brutalist styling for all 15 event data types (kinds) present in events.json.
+ */
+export const EVENT_KINDS = {
+  first_play: {
+    id: 'first_play',
+    label: 'FIRST PLAY',
+    category: 'music',
+    color: 'bg-sun text-ink border-ink',
+    desc: 'First track logged in archive',
+  },
+  discovery: {
+    id: 'discovery',
+    label: 'DISCOVERY',
+    category: 'music',
+    color: 'bg-mint text-ink border-ink',
+    desc: 'New artist or track first heard',
+  },
+  silence: {
+    id: 'silence',
+    label: 'SILENCE / GAP',
+    category: 'notes',
+    color: 'bg-paper text-ink border-ink/80',
+    desc: 'Extended listening hiatus or data gap',
+  },
+  salary_first: {
+    id: 'salary_first',
+    label: 'FIRST SALARY',
+    category: 'financial',
+    color: 'bg-hot text-ink border-ink',
+    desc: 'First professional paycheque credited',
+  },
+  investment: {
+    id: 'investment',
+    label: 'INVESTMENT',
+    category: 'financial',
+    color: 'bg-sun text-ink border-ink',
+    desc: 'SIP, mutual fund, or capital allocation',
+  },
+  double_day: {
+    id: 'double_day',
+    label: 'DOUBLE DAY',
+    category: 'milestone',
+    color: 'bg-volt text-white border-ink',
+    desc: 'Music listening and bank expense on same day',
+  },
+  big_move: {
+    id: 'big_move',
+    label: 'BIG MOVE',
+    category: 'financial',
+    color: 'bg-[#ff9900] text-ink border-ink',
+    desc: 'Significant capital transfer or asset purchase',
+  },
+  big_day: {
+    id: 'big_day',
+    label: 'BIG SPEND DAY',
+    category: 'financial',
+    color: 'bg-[#ff4d8d] text-ink border-ink',
+    desc: 'High expenditure day in bank ledger',
+  },
+  subscription: {
+    id: 'subscription',
+    label: 'SUBSCRIPTION',
+    category: 'subscription',
+    color: 'bg-mint text-ink border-ink',
+    desc: 'Recurring digital service or media payment',
+  },
+  binge: {
+    id: 'binge',
+    label: 'BINGE LISTEN',
+    category: 'music',
+    color: 'bg-hot text-ink border-ink',
+    desc: 'Intense single-artist repeat session',
+  },
+  surge: {
+    id: 'surge',
+    label: 'SURGE',
+    category: 'music',
+    color: 'bg-sun text-ink border-ink',
+    desc: 'Sudden spike in listening volume',
+  },
+  peak_month: {
+    id: 'peak_month',
+    label: 'PEAK MONTH',
+    category: 'music',
+    color: 'bg-volt text-white border-ink',
+    desc: 'All-time monthly scrobble record',
+  },
+  maturity: {
+    id: 'maturity',
+    label: 'MATURITY / REDEEM',
+    category: 'financial',
+    color: 'bg-[#00d2ff] text-ink border-ink',
+    desc: 'Fixed deposit or mutual fund redemption',
+  },
+  last_receipt: {
+    id: 'last_receipt',
+    label: 'LAST RECEIPT',
+    category: 'financial',
+    color: 'bg-paper text-ink border-ink',
+    desc: 'Final recorded bank ledger receipt',
+  },
+  peak_day: {
+    id: 'peak_day',
+    label: 'PEAK DAY',
+    category: 'music',
+    color: 'bg-[#b8f500] text-ink border-ink',
+    desc: 'Single day listening volume high',
+  },
+}
+
+export const ALL_KINDS_LIST = Object.keys(EVENT_KINDS)
+
 export const YEAR_SUBTITLES = {
   ALL: 'FULL ARCHIVE AUDIT (2013-2024)',
   2013: 'LATE-NIGHT BEGINNINGS / FIRST SIGNAL',
