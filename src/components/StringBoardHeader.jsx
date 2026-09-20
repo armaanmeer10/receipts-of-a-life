@@ -67,7 +67,7 @@ export default function StringBoardHeader({
           </div>
 
           <div className="mb-4">
-            <h1 className="font-display text-3xl font-bold leading-tight text-ink sm:text-4xl md:text-5xl lg:text-6xl">
+            <h1 className="font-display text-2xl font-bold leading-tight text-ink sm:text-3xl md:text-5xl lg:text-6xl">
               THE CONSPIRACY BOARD:
               <br />
               <span className="mt-1 inline-block bg-sun px-2 py-1">
@@ -115,54 +115,64 @@ export default function StringBoardHeader({
       </div>
 
       <div className="border-b-[3px] border-ink bg-paper px-4 py-2.5 md:px-8">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2">
-          <span className="shrink-0 font-mono text-[12px] font-bold tracking-widest text-ink/75">
+        <div className="mx-auto max-w-7xl">
+          <span className="mb-1.5 block shrink-0 font-mono text-[12px] font-bold tracking-widest text-ink/75">
             ▼ SELECT AUDIT YEAR:
           </span>
-          {AVAILABLE_YEARS.map((y) => {
-            const isSelected = String(selectedYear) === String(y)
-            return (
-              <button
-                key={y}
-                onClick={() => onSelectYear(y)}
-                aria-pressed={isSelected}
-                aria-label={`Select year ${y}`}
-                className={`min-h-[44px] border-2 px-3 py-1 font-mono text-[12px] font-bold tracking-wider transition ${
-                  isSelected
-                    ? 'border-ink bg-sun text-ink shadow-[2px_2px_0_#111]'
-                    : 'border-ink/50 bg-white text-ink/80 hover:border-ink'
-                }`}
-              >
-                {y}
-              </button>
-            )
-          })}
+          <div
+            className="flex gap-2 overflow-x-auto pb-1"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {AVAILABLE_YEARS.map((y) => {
+              const isSelected = String(selectedYear) === String(y)
+              return (
+                <button
+                  key={y}
+                  onClick={() => onSelectYear(y)}
+                  aria-pressed={isSelected}
+                  aria-label={`Select year ${y}`}
+                  className={`shrink-0 min-h-[44px] border-2 px-3 py-1 font-mono text-[12px] font-bold tracking-wider transition ${
+                    isSelected
+                      ? 'border-ink bg-sun text-ink shadow-[2px_2px_0_#111]'
+                      : 'border-ink/50 bg-white text-ink/80 hover:border-ink'
+                  }`}
+                >
+                  {y}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
 
       <div className="border-b-[3px] border-ink bg-paper px-4 py-3 md:px-8">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2">
-          <span className="shrink-0 font-mono text-[12px] font-bold tracking-widest text-ink/75">
+        <div className="mx-auto max-w-7xl">
+          <span className="mb-1.5 block shrink-0 font-mono text-[12px] font-bold tracking-widest text-ink/75">
             ▼ EVIDENCE FILTERS:
           </span>
-          {FILTER_CATS.map((cat) => {
-            const count = catCounts[cat.id] ?? 0
-            const isActive = activeFilter === cat.id
-            return (
-              <button
-                key={cat.id}
-                onClick={() => onSelectFilter(cat.id)}
-                aria-label={`Filter evidence by ${cat.label}`}
-                className={`min-h-[44px] border-2 px-3 py-1.5 font-mono text-[12px] font-bold tracking-wider transition ${
-                  isActive
-                    ? `${cat.active} shadow-[2px_2px_0_#111]`
-                    : 'border-ink/50 bg-white text-ink/80 hover:border-ink hover:text-ink'
-                }`}
-              >
-                {cat.label} ({count})
-              </button>
-            )
-          })}
+          <div
+            className="flex gap-2 overflow-x-auto pb-1"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {FILTER_CATS.map((cat) => {
+              const count = catCounts[cat.id] ?? 0
+              const isActive = activeFilter === cat.id
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => onSelectFilter(cat.id)}
+                  aria-label={`Filter evidence by ${cat.label}`}
+                  className={`shrink-0 min-h-[44px] border-2 px-3 py-1.5 font-mono text-[12px] font-bold tracking-wider transition ${
+                    isActive
+                      ? `${cat.active} shadow-[2px_2px_0_#111]`
+                      : 'border-ink/50 bg-white text-ink/80 hover:border-ink hover:text-ink'
+                  }`}
+                >
+                  {cat.label} ({count})
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
     </>

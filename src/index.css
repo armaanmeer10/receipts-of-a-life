@@ -22,6 +22,19 @@ body,
   min-height: 100%;
 }
 
+/* Belt-and-suspenders: prevent any element causing page-level horizontal scroll */
+html {
+  overflow-x: hidden;
+}
+
+/* Hide scrollbars on horizontally-scrolling rows (WebKit) */
+[style*="scrollbarWidth"] {
+  -ms-overflow-style: none;
+}
+[style*="scrollbarWidth"]::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   margin: 0;
   color: var(--color-ink);

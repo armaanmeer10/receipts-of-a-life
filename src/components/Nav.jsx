@@ -12,6 +12,8 @@ const NAV_LINKS = [
 
 /**
  * Global Header Navigation bar component.
+ * Mobile: two rows — logo+actions on row 1, scrollable nav strip on row 2.
+ * Desktop (lg+): single row with nav links inline.
  */
 export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
   const navigate = useNavigate()
@@ -30,6 +32,7 @@ export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
 
   return (
     <header className="sticky top-0 z-50 border-b-[3px] border-ink bg-paper">
+      {/* ── Row 1: logo + optional badges + action buttons ── */}
       <div className="flex items-center gap-3 px-4 py-3 md:px-8">
         <img
           src="/favicon.svg"
@@ -50,6 +53,7 @@ export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
           </span>
         )}
 
+        {/* Desktop nav — inline in row 1 */}
         <nav
           className="ml-auto hidden items-center gap-2 lg:flex"
           aria-label="Page sections"
@@ -88,17 +92,46 @@ export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
                 : 'Beep sound muted – click to enable'
             }
           >
-            {beepOn ? '🔊 BEEP ON' : '🔇 BEEP OFF'}
+            {beepOn ? '🔊' : '🔇'}
+            <span className="hidden sm:inline">
+              {' '}
+              {beepOn ? 'BEEP ON' : 'BEEP OFF'}
+            </span>
           </button>
           <button
             onClick={handlePrintClick}
             aria-label="Print story receipt and unroll thermal paper"
             className="min-h-[44px] border-[3px] border-ink bg-hot px-3.5 py-1.5 text-[12px] font-bold tracking-wider shadow-brut-sm transition hover:bg-hot/80 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
           >
-            🖨️ PRINT STORY
+            🖨️
+            <span className="hidden sm:inline"> PRINT STORY</span>
           </button>
         </div>
       </div>
+
+      {/* ── Row 2: scrollable nav strip — mobile only, hidden lg+ ── */}
+      <nav
+        className="flex overflow-x-auto border-t-2 border-ink/20 lg:hidden"
+        aria-label="Page sections"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {NAV_LINKS.map(({ label, to }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={to === '/'}
+            className={({ isActive }) =>
+              `shrink-0 flex min-h-[44px] items-center border-r-2 border-ink/20 px-4 text-[12px] font-bold tracking-wider transition ${
+                isActive
+                  ? 'bg-sun text-ink'
+                  : 'bg-paper text-ink/80 hover:bg-sun/30'
+              }`
+            }
+          >
+            {label}
+          </NavLink>
+        ))}
+      </nav>
     </header>
   )
 }
@@ -110,3 +143,4 @@ Nav.propTypes = {
   onBeep: PropTypes.func.isRequired,
   onPrint: PropTypes.func,
 }
+

@@ -102,58 +102,68 @@ export default function ExploreLogConsole({
         </div>
 
         {/* ══ PRESET AUDITS ══ */}
-        <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-dashed border-ink/30 pt-2">
-          <span className="text-[11px] font-bold tracking-wider text-ink/75">
+        <div className="mt-3 border-t border-dashed border-ink/30 pt-2">
+          <span className="mb-1 block text-[11px] font-bold tracking-wider text-ink/75">
             PRESETS:
           </span>
-          {PRESET_CHIPS.map((chip) => (
-            <button
-              key={chip.query}
-              onClick={() => onSearchChange(chip.query)}
-              aria-label={`Search preset ${chip.label}`}
-              className={`min-h-[32px] border border-ink/50 px-2 py-0.5 text-[11px] font-bold transition cursor-pointer ${
-                searchQuery === chip.query
-                  ? 'border-ink bg-hot text-ink shadow-[1px_1px_0_#111]'
-                  : 'bg-paper text-ink/80 hover:border-ink hover:bg-sun/40'
-              }`}
-            >
-              + {chip.label}
-            </button>
-          ))}
+          <div
+            className="flex gap-1.5 overflow-x-auto pb-1"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {PRESET_CHIPS.map((chip) => (
+              <button
+                key={chip.query}
+                onClick={() => onSearchChange(chip.query)}
+                aria-label={`Search preset ${chip.label}`}
+                className={`shrink-0 min-h-[32px] border border-ink/50 px-2 py-0.5 text-[11px] font-bold transition cursor-pointer ${
+                  searchQuery === chip.query
+                    ? 'border-ink bg-hot text-ink shadow-[1px_1px_0_#111]'
+                    : 'bg-paper text-ink/80 hover:border-ink hover:bg-sun/40'
+                }`}
+              >
+                + {chip.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* ══ ALL 15 DATA TYPE FILTERS (Requirement 1) ══ */}
-        <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-dashed border-ink/30 pt-2">
-          <span className="text-[11px] font-bold tracking-wider text-ink/75">
+        <div className="mt-2 border-t border-dashed border-ink/30 pt-2">
+          <span className="mb-1 block text-[11px] font-bold tracking-wider text-ink/75">
             RECEIPT TYPES:
           </span>
-          <button
-            onClick={() => onSelectKind('ALL')}
-            className={`min-h-[30px] border px-2 py-0.5 text-[11px] font-bold transition cursor-pointer ${
-              selectedKind === 'ALL'
-                ? 'border-ink bg-ink text-paper shadow-[1px_1px_0_#111]'
-                : 'border-ink/50 bg-paper text-ink hover:bg-sun/40'
-            }`}
+          <div
+            className="flex gap-1.5 overflow-x-auto pb-1"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            ALL TYPES
-          </button>
-          {ALL_KINDS_LIST.map((k) => {
-            const meta = EVENT_KINDS[k]
-            const isSel = selectedKind === k
-            return (
-              <button
-                key={k}
-                onClick={() => onSelectKind(isSel ? 'ALL' : k)}
-                className={`min-h-[30px] border px-2 py-0.5 font-mono text-[10px] font-bold transition cursor-pointer ${
-                  isSel
-                    ? 'border-ink bg-sun text-ink shadow-[2px_2px_0_#111]'
-                    : `${meta.color} opacity-80 hover:opacity-100`
-                }`}
-              >
-                {meta.label}
-              </button>
-            )
-          })}
+            <button
+              onClick={() => onSelectKind('ALL')}
+              className={`shrink-0 min-h-[30px] border px-2 py-0.5 text-[11px] font-bold transition cursor-pointer ${
+                selectedKind === 'ALL'
+                  ? 'border-ink bg-ink text-paper shadow-[1px_1px_0_#111]'
+                  : 'border-ink/50 bg-paper text-ink hover:bg-sun/40'
+              }`}
+            >
+              ALL TYPES
+            </button>
+            {ALL_KINDS_LIST.map((k) => {
+              const meta = EVENT_KINDS[k]
+              const isSel = selectedKind === k
+              return (
+                <button
+                  key={k}
+                  onClick={() => onSelectKind(isSel ? 'ALL' : k)}
+                  className={`shrink-0 min-h-[30px] border px-2 py-0.5 font-mono text-[10px] font-bold transition cursor-pointer ${
+                    isSel
+                      ? 'border-ink bg-sun text-ink shadow-[2px_2px_0_#111]'
+                      : `${meta.color} opacity-80 hover:opacity-100`
+                  }`}
+                >
+                  {meta.label}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
     </>

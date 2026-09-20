@@ -307,7 +307,7 @@ export default function Insights({ stats, events, hours }) {
               </p>
             </div>
 
-            <div className="max-w-xs shrink-0 border-[3px] border-ink bg-sun p-4 shadow-brut-sm">
+            <div className="w-full shrink-0 border-[3px] border-ink bg-sun p-4 shadow-brut-sm md:max-w-xs">
               <div className="text-[12px] font-bold tracking-widest text-ink/80">
                 AUDIT YEAR: {selectedYear}
               </div>

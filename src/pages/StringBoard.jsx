@@ -201,8 +201,70 @@ export default function StringBoard({ events }) {
       />
 
       <div className="mx-auto grid max-w-7xl lg:grid-cols-[1fr_360px]">
+        {/* ─── Mobile vertical list (hidden md+) ─── */}
+        <div className="md:hidden border-b-[3px] border-ink">
+          {visibleCards.length === 0 ? (
+            <div className="flex flex-col items-center justify-center p-6 text-center font-mono">
+              <div className="border-[3px] border-ink bg-white p-6 shadow-brut max-w-sm space-y-3">
+                <div className="text-4xl" aria-hidden="true">📌</div>
+                <div className="font-display text-lg font-bold text-ink">
+                  NO EVIDENCE MATCHING CURRENT FILTER
+                </div>
+                <button
+                  onClick={handleClearFilters}
+                  className="mt-2 border-2 border-ink bg-sun px-4 py-2 font-display text-xs font-bold tracking-wider text-ink shadow-[2px_2px_0_#111] hover:bg-sun/80"
+                >
+                  RESET EVIDENCE BOARD
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3 p-4">
+              {visibleCards.map((def) => {
+                const event = getEvent(def, events)
+                const isSelected = selectedId === def.id || selectedId === def.eventId
+                return (
+                  <button
+                    key={def.id}
+                    onClick={() => handleCard(def.id)}
+                    aria-pressed={isSelected}
+                    className={`w-full text-left border-[3px] border-ink p-3 font-mono text-[12px] shadow-brut-sm transition ${
+                      isSelected ? 'bg-sun' : 'bg-white hover:bg-sun/20'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-display text-sm font-bold">
+                        {event?.title || def.id}
+                      </span>
+                      <span className="shrink-0 border border-ink px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-widest">
+                        {def.category}
+                      </span>
+                    </div>
+                    {event?.date && (
+                      <div className="mt-1 text-ink/60">{event.date.slice(0, 10)}</div>
+                    )}
+                    {def.connects.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {def.connects.map((cid) => (
+                          <span
+                            key={cid}
+                            className="border border-hot bg-hot/10 px-1.5 py-0.5 text-[10px] font-bold text-hot tracking-wider"
+                          >
+                            → {cid.toUpperCase()}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* ─── Desktop/tablet corkboard (hidden below md) ─── */}
         <div
-          className="relative overflow-hidden border-b-[3px] border-ink lg:border-b-0 lg:border-r-[3px]"
+          className="relative hidden md:block overflow-hidden border-b-[3px] border-ink lg:border-b-0 lg:border-r-[3px]"
           style={{ minHeight: 580, height: 580 }}
         >
           <div
@@ -279,7 +341,7 @@ export default function StringBoard({ events }) {
           )}
         </div>
 
-        <div style={{ minHeight: 580, height: 580 }}>
+        <div className="md:h-[580px]">
           <Dossier
             selectedId={selectedId}
             events={events}

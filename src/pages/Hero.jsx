@@ -109,7 +109,7 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
             {selectedYear === 'ALL' ? '2013–2024' : selectedYear}
           </motion.span>
 
-          <h1 className="mt-5 block w-fit border-[3px] border-ink bg-sun px-4 py-2 font-display text-5xl font-bold leading-[0.95] tracking-tight shadow-brut sm:text-6xl xl:text-7xl">
+          <h1 className="mt-5 block w-fit border-[3px] border-ink bg-sun px-4 py-2 font-display text-3xl font-bold leading-[0.95] tracking-tight shadow-brut sm:text-4xl md:text-5xl xl:text-7xl">
             YOUR LIFE,
             <br />
             IN RECEIPTS.
@@ -130,33 +130,33 @@ export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
             </div>
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             {/* ══ START THE STORY BUTTON (Requirement 6) ══ */}
             <button
               onClick={handleStartStory}
               aria-label="Start interactive 5-step story walkthrough"
-              className="flex min-h-[44px] items-center gap-2 border-[3px] border-ink bg-sun px-5 py-3 font-display text-sm font-bold tracking-wide shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none cursor-pointer"
+              className="flex min-h-[44px] w-full items-center justify-center gap-2 border-[3px] border-ink bg-sun px-5 py-3 font-display text-sm font-bold tracking-wide shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none cursor-pointer sm:w-auto"
             >
               <span>⚡</span> START THE STORY
             </button>
             <button
               onClick={onReprint}
               aria-label="Print story receipt"
-              className="flex min-h-[44px] items-center gap-2 border-[3px] border-ink bg-hot px-5 py-3 font-display text-sm font-bold tracking-wide shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none cursor-pointer"
+              className="flex min-h-[44px] w-full items-center justify-center gap-2 border-[3px] border-ink bg-hot px-5 py-3 font-display text-sm font-bold tracking-wide shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none cursor-pointer sm:w-auto"
             >
               <PrinterIcon /> PRINT MY STORY
             </button>
             <button
               onClick={handleSaveReceipt}
               aria-label="Save or print thermal receipt"
-              className="flex min-h-[44px] items-center gap-2 border-[3px] border-ink bg-mint px-5 py-3 font-display text-sm font-bold tracking-wide text-ink shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none cursor-pointer"
+              className="flex min-h-[44px] w-full items-center justify-center gap-2 border-[3px] border-ink bg-mint px-5 py-3 font-display text-sm font-bold tracking-wide text-ink shadow-brut transition hover:-translate-y-0.5 active:translate-x-[6px] active:translate-y-[6px] active:shadow-none cursor-pointer sm:w-auto"
             >
               <SaveIcon /> SAVE RECEIPT
             </button>
             <button
               onClick={scrollToAudit}
               aria-label="Read the audit – scroll down"
-              className="min-h-[44px] border-[3px] border-ink bg-white px-4 py-3 text-[12px] font-bold tracking-wider shadow-brut-sm transition hover:-translate-y-0.5 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none cursor-pointer"
+              className="min-h-[44px] w-full border-[3px] border-ink bg-white px-4 py-3 text-[12px] font-bold tracking-wider shadow-brut-sm transition hover:-translate-y-0.5 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none cursor-pointer sm:w-auto"
             >
               READ AUDIT ↓
             </button>
