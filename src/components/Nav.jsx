@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { playBeep } from '../lib/helpers'
 
 function PrinterIcon() {
   return (
@@ -11,14 +12,28 @@ function PrinterIcon() {
 }
 
 const NAV_LINKS = [
-  { label: 'HERO',         to: '/'        },
-  { label: 'STORY ROLL',  to: '/story'   },
-  { label: 'STRING BOARD',to: '/board'   },
-  { label: 'EXPLORE',     to: '/explore' },
-  { label: 'INSIGHTS',    to: '/insights'},
+  { label: 'HERO', to: '/' },
+  { label: 'STORY ROLL', to: '/story' },
+  { label: 'STRING BOARD', to: '/board' },
+  { label: 'EXPLORE', to: '/explore' },
+  { label: 'INSIGHTS', to: '/insights' },
 ]
 
 export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
+  const navigate = useNavigate()
+
+  const handlePrintClick = () => {
+    if (beepOn) playBeep()
+    if (onPrint) onPrint()
+    navigate('/')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleBeepClick = () => {
+    if (onBeep) onBeep()
+    if (!beepOn) playBeep()
+  }
+
   return (
     <header className="sticky top-0 z-50 border-b-[3px] border-ink bg-paper">
       <div className="flex items-center gap-3 px-4 py-3 md:px-8">
@@ -59,19 +74,21 @@ export default function Nav({ years, paper, beepOn, onBeep, onPrint }) {
             </span>
           )}
           <button
-            onClick={onBeep}
-            className={`min-h-[44px] border-2 border-ink px-2 py-1 text-[12px] font-bold tracking-wider transition active:translate-y-0.5 ${beepOn ? 'bg-mint' : 'bg-white'}`}
+            onClick={handleBeepClick}
+            className={`min-h-[44px] border-2 border-ink px-3 py-1 text-[12px] font-bold tracking-wider transition active:translate-y-0.5 ${
+              beepOn ? 'bg-mint text-ink' : 'bg-white text-ink/75'
+            }`}
             aria-pressed={beepOn}
-            aria-label={beepOn ? 'Beep sound on – click to mute' : 'Beep sound off – click to enable'}
+            aria-label={beepOn ? 'Beep sound enabled – click to mute' : 'Beep sound muted – click to enable'}
           >
-            {beepOn ? '🔊 BEEP ON' : '🔇 BEEP'}
+            {beepOn ? '🔊 BEEP ON' : '🔇 BEEP OFF'}
           </button>
           <button
-            onClick={onPrint}
-            aria-label="Print my story receipt"
-            className="min-h-[44px] border-[3px] border-ink bg-hot px-3 py-1.5 text-[12px] font-bold tracking-wider shadow-brut-sm transition active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+            onClick={handlePrintClick}
+            aria-label="Print story receipt and unroll thermal paper"
+            className="min-h-[44px] border-[3px] border-ink bg-hot px-3.5 py-1.5 text-[12px] font-bold tracking-wider shadow-brut-sm transition hover:bg-hot/80 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
           >
-            PRINT STORY
+            🖨️ PRINT STORY
           </button>
         </div>
       </div>

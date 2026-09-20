@@ -7,6 +7,7 @@ import StoryRoll from './pages/StoryRoll'
 import StringBoard from './pages/StringBoard'
 import Explore from './pages/Explore'
 import Insights from './pages/Insights'
+import { playBeep } from './lib/helpers'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -104,6 +105,14 @@ export default function App() {
     }
   }, [])
 
+  const handlePrint = () => {
+    setPrintKey((k) => k + 1)
+  }
+
+  const handleToggleBeep = () => {
+    setBeepOn((b) => !b)
+  }
+
   if (loading) return <ThermalLoading />
   if (error || !stats || !events) return <ThermalError message={error} />
 
@@ -111,11 +120,29 @@ export default function App() {
     <HashRouter>
       <ScrollToTop />
       <div className="flex min-h-screen flex-col bg-paper font-sans text-ink selection:bg-hot selection:text-ink max-w-full overflow-x-hidden">
-        <Nav printKey={printKey} onPrint={() => setPrintKey((k) => k + 1)} />
+        <Nav
+          years={stats.years}
+          paper={100}
+          beepOn={beepOn}
+          onBeep={handleToggleBeep}
+          onPrint={handlePrint}
+        />
         <Routes>
           <Route
             path="/"
-            element={<Hero stats={stats} events={events} printKey={printKey} beepOn={beepOn} setBeepOn={setBeepOn} />}
+            element={
+              <Hero
+                stats={stats}
+                events={events}
+                printKey={printKey}
+                onReprint={() => {
+                  handlePrint()
+                  if (beepOn) playBeep()
+                }}
+                beepOn={beepOn}
+                setBeepOn={setBeepOn}
+              />
+            }
           />
           <Route path="/story" element={<StoryRoll stats={stats} events={events} />} />
           <Route path="/board" element={<StringBoard stats={stats} events={events} />} />
