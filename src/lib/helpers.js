@@ -40,23 +40,32 @@ export function fmtTime(isoStr) {
   })
 }
 
+/** Singleton AudioContext — reused across all beep calls to avoid creation cost. */
+let _audioCtx = null
+
 /**
  * Synthesizes a short 880Hz audio beep tone using the Web Audio API for thermal printer sound effects.
+ * Reuses a singleton AudioContext instance for performance.
  */
 export function playBeep() {
   try {
     const Ctx = window.AudioContext || window.webkitAudioContext
     if (!Ctx) return
-    const ctx = new Ctx()
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
+    if (!_audioCtx || _audioCtx.state === 'closed') {
+      _audioCtx = new Ctx()
+    }
+    if (_audioCtx.state === 'suspended') {
+      _audioCtx.resume()
+    }
+    const osc = _audioCtx.createOscillator()
+    const gain = _audioCtx.createGain()
     osc.type = 'square'
     osc.frequency.value = 880
     gain.gain.value = 0.05
     osc.connect(gain)
-    gain.connect(ctx.destination)
+    gain.connect(_audioCtx.destination)
     osc.start()
-    osc.stop(ctx.currentTime + 0.1)
+    osc.stop(_audioCtx.currentTime + 0.1)
   } catch {
     /* audio blocked by browser policy */
   }

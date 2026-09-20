@@ -2,7 +2,7 @@
  * Hero Page: Landing experience featuring thermal receipt printer animation, year selector,
  * interactive stat tiles, neo-brutalist stickers, and browser thermal print trigger.
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, memo } from 'react'
 import { motion } from 'framer-motion'
 import { useYear, AVAILABLE_YEARS } from '../context/YearContext'
 import { getYearStats } from '../utils/yearStats'
@@ -16,7 +16,7 @@ function zigzag(teeth = 22, depth = 8) {
   return `polygon(${pts.join(', ')})`
 }
 const ZIGZAG = zigzag()
-const OUTLINE = 'drop-shadow(0 0 2px #111) drop-shadow(5px 5px 0 #111)'
+// Simple box-shadow replaces the stacked SVG filter — much cheaper to composite
 const BARCODE =
   'repeating-linear-gradient(90deg,#111 0 2px,transparent 2px 4px,#111 4px 5px,transparent 5px 8px,#111 8px 11px,transparent 11px 12px)'
 
@@ -97,7 +97,7 @@ function Receipt({ yearStats }) {
   const yLabel = yearStats.year === 'ALL' ? 'ALL YEARS (2013-2024)' : `YEAR ${yearStats.year}`
 
   return (
-    <div id="printable-receipt" style={{ filter: OUTLINE }}>
+    <div id="printable-receipt" style={{ boxShadow: '5px 5px 0 #111, 0 0 0 2px #111' }}>
       <div
         className="bg-[#fffdf5] px-4 pb-8 pt-4 font-mono text-[12px] leading-relaxed text-ink"
         style={{ clipPath: ZIGZAG }}
@@ -237,7 +237,7 @@ function Printer({ printKey, yearStats }) {
   )
 }
 
-function Tile({ label, icon, value, suffix = '', caption, bg, text = 'text-ink', rotate, delay }) {
+const Tile = memo(function Tile({ label, icon, value, suffix = '', caption, bg, text = 'text-ink', rotate, delay }) {
   const shown = useCountUp(value)
 
   return (
@@ -260,11 +260,14 @@ function Tile({ label, icon, value, suffix = '', caption, bg, text = 'text-ink',
       </div>
     </motion.div>
   )
-}
+})
 
 export default function Hero({ stats, events, printKey, onReprint, beepOn }) {
   const { selectedYear, setSelectedYear } = useYear()
-  const yearStats = getYearStats(events, stats, selectedYear)
+  const yearStats = useMemo(
+    () => getYearStats(events, stats, selectedYear),
+    [events, stats, selectedYear]
+  )
 
   const handleYearChange = (y) => {
     setSelectedYear(y)

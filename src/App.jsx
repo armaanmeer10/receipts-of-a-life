@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react'
+import { Suspense, lazy, useState, useEffect } from 'react'
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { YearProvider, useYear } from './context/YearContext'
 import Nav from './components/Nav'
 import Ticker from './components/Ticker'
 import Hero from './pages/Hero'
-import StoryRoll from './pages/StoryRoll'
-import StringBoard from './pages/StringBoard'
-import Explore from './pages/Explore'
-import Insights from './pages/Insights'
 import { playBeep } from './lib/helpers'
+
+// Lazy-load all secondary pages — Hero stays eagerly loaded for first paint
+const StoryRoll  = lazy(() => import('./pages/StoryRoll'))
+const StringBoard = lazy(() => import('./pages/StringBoard'))
+const Explore    = lazy(() => import('./pages/Explore'))
+const Insights   = lazy(() => import('./pages/Insights'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -16,6 +18,28 @@ function ScrollToTop() {
     window.scrollTo(0, 0)
   }, [pathname])
   return null
+}
+
+/** Themed neo-brutalist loading fallback shown while a lazy page chunk loads. */
+function PageLoader() {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-paper p-6 font-mono text-ink">
+      <div className="w-full max-w-sm border-[3px] border-ink bg-white p-6 shadow-brut text-center space-y-4">
+        <div className="inline-block border-2 border-ink bg-sun px-3 py-1 text-xs font-bold tracking-widest text-ink animate-pulse">
+          LOADING ARCHIVE ROLL ///
+        </div>
+        <div className="my-2 border-t-2 border-dashed border-ink/40" />
+        <div className="font-display text-xl font-bold text-ink">
+          FEEDING THERMAL PAPER…
+        </div>
+        <div className="my-2 border-t-2 border-dashed border-ink/40" />
+        <div className="flex justify-between text-xs text-ink/70 font-bold">
+          <span>STATUS: BUFFERING</span>
+          <span>203 DPI</span>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function ThermalLoading() {
@@ -134,28 +158,30 @@ function MainApp() {
           onBeep={handleToggleBeep}
           onPrint={handlePrint}
         />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Hero
-                stats={stats}
-                events={events}
-                printKey={printKey}
-                onReprint={() => {
-                  handlePrint()
-                  if (beepOn) playBeep()
-                }}
-                beepOn={beepOn}
-                setBeepOn={setBeepOn}
-              />
-            }
-          />
-          <Route path="/story" element={<StoryRoll stats={stats} events={events} />} />
-          <Route path="/board" element={<StringBoard stats={stats} events={events} />} />
-          <Route path="/explore" element={<Explore stats={stats} events={events} />} />
-          <Route path="/insights" element={<Insights stats={stats} events={events} />} />
-        </Routes>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Hero
+                  stats={stats}
+                  events={events}
+                  printKey={printKey}
+                  onReprint={() => {
+                    handlePrint()
+                    if (beepOn) playBeep()
+                  }}
+                  beepOn={beepOn}
+                  setBeepOn={setBeepOn}
+                />
+              }
+            />
+            <Route path="/story" element={<StoryRoll stats={stats} events={events} />} />
+            <Route path="/board" element={<StringBoard stats={stats} events={events} />} />
+            <Route path="/explore" element={<Explore stats={stats} events={events} />} />
+            <Route path="/insights" element={<Insights stats={stats} events={events} />} />
+          </Routes>
+        </Suspense>
         <Ticker stats={stats} events={events} />
       </div>
     </HashRouter>
